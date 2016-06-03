@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#ABABAB</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="icon_grey">#212121</color>
+    <color name="bottom_bar_bg">#E4E4E4</color>
+    <color name="darkui">#212121</color>
+</resources>
