@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="in.medhajnews.app.MainActivity"
+    tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
     <TextView
@@ -26,4 +26,13 @@
         android:layout_below="@+id/textView2"
         android:layout_toEndOf="@+id/textView2"
         android:layout_marginTop="67dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Video View"
+        android:id="@+id/video"
+        android:layout_below="@+id/article"
+        android:layout_alignStart="@+id/article" />
+    <!--http://jell.yfish.us/media/jellyfish-10-mbps-hd-hevc-10bit.mkv-->
 </RelativeLayout>

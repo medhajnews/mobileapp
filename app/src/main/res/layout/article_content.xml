@@ -1,104 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".Article"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical"
+    tools:context=".ArticleActivity"
     tools:showIn="@layout/activity_article">
 
-        <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
-            android:layout_width="match_parent"
-            android:id="@+id/main_scrollView"
-            android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_marginTop="?attr/actionBarSize"
+    <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
+        android:id="@+id/main_scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/content_holder"
-        android:orientation="vertical">
-        <ImageView
-            android:id="@+id/main_image"
-            android:src="@drawable/code"
-            android:scaleType="centerCrop"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:contentDescription="@string/article_main_image" />
-        <TextView
-            android:id="@+id/content_title"
-            android:text="Why relying on your memory could compromise your security"
-            android:layout_width="match_parent"
-            android:layout_margin="16dp"
-            android:textStyle="bold"
-            android:textAlignment="textStart"
-            android:textSize="25sp"
-            android:layout_height="wrap_content" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/content_author"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+        android:layout_height="match_parent">
 
-                android:textAlignment="textStart"
-                android:textStyle="bold"
-                android:layout_height="wrap_content"
-                android:text="by Anubhav"/>
-            <TextView
-                android:id="@+id/content_date"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textAlignment="textEnd"
-                android:layout_height="wrap_content"
-                android:text="Jun 3, 2016"/>
-        </LinearLayout>
         <LinearLayout
+            android:id="@+id/content_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/main_image"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:contentDescription="@string/article_main_image"
+                android:scaleType="centerCrop" />
+
             <TextView
-                android:id="@+id/content_area"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textAlignment="textStart"
-                android:textAllCaps="true"
+                android:id="@+id/content_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Delhi"/>
+                android:layout_margin="16dp"
+                android:clickable="false"
+                android:layout_gravity="center_vertical|end"
+                android:text="Why relying on your memory could compromise your security"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/article_title"
+                android:textIsSelectable="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:clickable="false"
+                android:layout_marginStart="16dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/content_author"
+                    android:layout_width="0dp"
+                    android:clickable="false"
+                    android:textSize="13sp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/article_info"
+                    android:layout_weight="1"
+                    android:textAllCaps="true"
+                    android:text="by Anubhav"
+                    android:textAlignment="textStart"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/content_date"
+                    android:layout_width="0dp"
+                    android:clickable="false"
+                    android:textSize="13sp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:textColor="@color/article_info"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Jun 3, 2016"
+                    android:textAlignment="textEnd" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:clickable="false"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/content_area"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Delhi"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/article_info"
+                    android:clickable="false"
+                    android:textAlignment="textStart"
+                    android:textAllCaps="true" />
+
+                <TextView
+                    android:id="@+id/content_update_time"
+                    android:layout_width="0dp"
+                    android:clickable="false"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="9:00 PM"
+                    android:textSize="13sp"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/article_info"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
             <TextView
-                android:id="@+id/content_update_time"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textAlignment="textEnd"
-                android:textAllCaps="true"
+                android:id="@+id/main_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="UPDATED TODAY 9:00 PM"/>
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:clickable="false"
+                android:focusable="false"
+                android:layout_gravity="center_vertical|end"
+                android:lineSpacingExtra="2dp"
+                android:paddingBottom="50dp"
+                android:text="@string/sample_content_text"
+                android:textIsSelectable="true"
+                android:textSize="16sp" />
+            <!--justify-->
         </LinearLayout>
-        <TextView
-            android:id="@+id/main_content"
-            android:layout_width="match_parent"
-            android:textSize="19sp"
-            android:lineSpacingExtra="2dp"
-            android:layout_height="wrap_content"
-            android:text="@string/large_text"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:paddingBottom="95dp"
-            android:textIsSelectable="true" />
-        <!--justify-->
-    </LinearLayout>
-        </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+    </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+
     <android.support.design.widget.TabLayout
+        android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bottom_bar"
-        app:tabMode="scrollable"
-        app:tabIndicatorHeight="0dp"
+        android:layout_alignParentBottom="true"
         app:tabBackground="@color/bottom_bar_bg"
-        android:layout_alignParentBottom="true" />
+        app:tabIndicatorHeight="0dp"
+        app:tabMaxWidth="0dp"
+        app:tabGravity="fill"
+        app:tabMode="fixed" />
 </RelativeLayout>

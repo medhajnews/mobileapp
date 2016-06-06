@@ -13,6 +13,8 @@ import android.widget.SeekBar;
  * Created by bhav on 6/3/16 for the Medhaj News Project.
  */
 public class FontSelectionSeekBar extends SeekBar {
+
+    private Paint mPaint = new Paint();
     public FontSelectionSeekBar(Context context) {
         super(context);
     }
@@ -33,12 +35,11 @@ public class FontSelectionSeekBar extends SeekBar {
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        int thumb_x = (int) (( (double)this.getProgress()/this.getMax() ) * (double)this.getWidth());
+        int thumb_x = (int) (( (double)this.getProgress()/this.getMax() ) * (double)this.getWidth()/2);
         int middle = this.getHeight()/2;
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setTextSize(32);
-        canvas.drawText("Hello", thumb_x, middle - 10, paint);
+        mPaint.setColor(Color.BLACK);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setTextSize(32);
+        canvas.drawText("Hello", thumb_x, middle - 40, mPaint);
     }
 }

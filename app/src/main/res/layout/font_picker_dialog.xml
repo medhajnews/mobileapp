@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/base"
     android:layout_margin="@dimen/activity_vertical_margin"
     android:padding="@dimen/activity_horizontal_margin">
 
-    <in.medhajnews.app.Widgets.FontSelectionSeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/font_seekbar"
-        android:interpolator="@android:interpolator/accelerate_decelerate"
-        android:layout_gravity="center_horizontal" />
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="4dp"
+        android:id="@+id/fontsizesmall"
+        android:src="@drawable/ic_text_size"/>
 
-    <Button style="?android:attr/borderlessButtonStyle"
+    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Okay"
-        android:id="@+id/okay_button"
-        android:layout_gravity="right" />
+        app:dsb_max="33"
+        app:dsb_min="16"
+        android:id="@+id/font_seekbar" />
 </LinearLayout>
