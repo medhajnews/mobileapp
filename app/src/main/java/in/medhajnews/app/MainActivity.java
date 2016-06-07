@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
-
+import android.widget.ImageView;
 
 
 public class MainActivity extends AppCompatActivity
@@ -32,7 +32,14 @@ public class MainActivity extends AppCompatActivity
 //        getSupportActionBar().
 
 
-
+        ImageView img = (ImageView) findViewById(R.id.imageView2);
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent article = new Intent(MainActivity.this, ArticleActivity.class);
+                startActivity(article);
+            }
+        });
         Button article_view = (Button) findViewById(R.id.article);
         article_view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,11 +58,20 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        if(getSupportActionBar()!=null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setDisplayShowCustomEnabled(true);
-        }
+        Button gallery_view = (Button) findViewById(R.id.gallery);
+        gallery_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery = new Intent(MainActivity.this, GalleryActivity.class);
+                startActivity(gallery);
+            }
+        });
+
+//        if(getSupportActionBar()!=null) {
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+//            getSupportActionBar().setDisplayShowCustomEnabled(true);
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
@@ -69,13 +85,13 @@ public class MainActivity extends AppCompatActivity
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                getSupportActionBar().setTitle("What?");
+//                getSupportActionBar().setTitle("What?");
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle("Medhaj");
+//                getSupportActionBar().setTitle("Medhaj");
             }
         };
 

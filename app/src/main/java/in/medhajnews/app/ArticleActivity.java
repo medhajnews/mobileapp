@@ -125,6 +125,13 @@ public class ArticleActivity extends AppCompatActivity {
         mUpdateTextView = (TextView) findViewById(R.id.content_update_time);
         mDateTextView = (TextView) findViewById(R.id.content_date);
         mContentTextView.setTypeface(lato);
+        articleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gallery = new Intent(ArticleActivity.this, GalleryActivity.class);
+                startActivity(gallery);
+            }
+        });
         mContentTextView.setTextSize(prefs.getInt("font_size", 16));
         mTitleTextView.setTextSize(prefs.getInt("font_size", 16) + 8);
         /*
@@ -215,7 +222,7 @@ public class ArticleActivity extends AppCompatActivity {
             //make it light
             isUIdark = false;
             mContentTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            mContentTextView.setTextColor(oldtextColors);
+            mContentTextView.setTextColor(ContextCompat.getColor(context, R.color.article_content));
             mAuthorTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mAuthorTextView.setTextColor(oldtextColors);
             mTitleTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
@@ -308,10 +315,8 @@ public class ArticleActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-//                NavUtils.navigateUpFromSameTask(this);
-                /*
-                    navigate up from same task does not recreate the state
-                 */
+                //NavUtils.navigateUpFromSameTask(this);
+                //navigate up from same task does not recreate the state
                 finish();
                 return true;
         }

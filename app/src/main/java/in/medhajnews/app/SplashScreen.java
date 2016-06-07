@@ -72,8 +72,11 @@ public class SplashScreen extends AppCompatActivity {
                 e.printStackTrace();
             }
             // end replace
-
-            isInternetWorking = isInternetAvailable();
+            if(isNetworkConnected()) {
+                isInternetWorking = isInternetAvailable();
+            } else {
+                isInternetWorking = false;
+            }
             Log.d(TAG, String.valueOf(isInternetWorking));
             return null;
         }

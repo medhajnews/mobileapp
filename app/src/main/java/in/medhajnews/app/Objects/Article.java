@@ -16,14 +16,16 @@ public class Article implements Parcelable{
     private String ArticleTitle;
     private String ArticleDate;
     private String ArticleUpdateTime;
+    private String Category;
 
     public Article(String articleContent, String articleAuthor, String articleTitle, String articleDate,
-                   String articleUpdateTime) {
+                   String articleUpdateTime, String category) {
         this.ArticleAuthor = articleAuthor;
         this.ArticleContent = articleContent;
         this.ArticleDate = articleDate;
         this.ArticleTitle = articleTitle;
         this.ArticleUpdateTime = articleUpdateTime;
+        this.Category = category;
     }
 
     protected Article(Parcel in) {
@@ -32,6 +34,7 @@ public class Article implements Parcelable{
         ArticleTitle = in.readString();
         ArticleDate = in.readString();
         ArticleUpdateTime = in.readString();
+        Category = in.readString();
     }
 
     public static final Creator<Article> CREATOR = new Creator<Article>() {
@@ -53,7 +56,8 @@ public class Article implements Parcelable{
                 context.getResources().getString(R.string.sample_author),
                 context.getResources().getString(R.string.sample_title),
                 context.getResources().getString(R.string.sample_date),
-                context.getResources().getString(R.string.sample_update_time)
+                context.getResources().getString(R.string.sample_update_time),
+                context.getString(R.string.sample_category)
         );
     }
 
@@ -69,5 +73,6 @@ public class Article implements Parcelable{
         dest.writeString(ArticleTitle);
         dest.writeString(ArticleDate);
         dest.writeString(ArticleUpdateTime);
+        dest.writeString(Category);
     }
 }

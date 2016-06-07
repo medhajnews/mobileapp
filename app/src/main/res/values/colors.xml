@@ -10,4 +10,5 @@
     <color name="black">#000000</color>
     <color name="article_title">#363636</color>
     <color name="article_info">#989898</color>
+    <color name="article_content">#1F1F1F</color>
 </resources>
