@@ -4,12 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
     android:animateLayoutChanges="true"
     android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
     tools:context=".ArticleActivity">
 
 
-    <include layout="@layout/article_content"/>
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:titleTextColor="#343434" />
+
+        </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/article_content" />
 
 </android.support.design.widget.CoordinatorLayout>

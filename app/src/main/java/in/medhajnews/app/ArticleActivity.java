@@ -6,12 +6,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,26 +39,36 @@ import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
+import in.medhajnews.app.Objects.Article;
+
 public class ArticleActivity extends AppCompatActivity {
 
-    private TabLayout mBottomBar;
+//    private TabLayout mBottomBar;
+    private CardView mBottomBar;
+    private ImageView mFontSizeIcon, mUISwitchIcon, mBookmarkIcon, mShareIcon;
     private boolean isUIdark = false;
     private boolean isUIfull = false;
     private boolean isArticleSaved = false;
     private LinearLayout mContentHolder;
     private ColorStateList oldtextColors;
+    private Toolbar mToolbar;
+    private ImageView mArticleImageView;
+    private Toast mLastToast;
 
     private SharedPreferences prefs;
     /**
-     *   Preferences                  DefaultValue
-     *   //font_size                      0
-     *   //is_ui_state_dark              false
+     * Preferences                  DefaultValue
+     * //font_size                      0
+     * //is_ui_state_dark              false
      */
 
     private final static String TAG = ArticleActivity.class.getSimpleName();
 
     private TextView mTitleTextView, mContentTextView, mAuthorTextView, mDateTextView,
             mAreaTextView, mUpdateTextView;
+
+    private Article mArticle;
+    private AppBarLayout mAppBarView;
 
     @Override
     protected void onStop() {
@@ -65,59 +82,103 @@ public class ArticleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
         setContentView(R.layout.activity_article);
-        if(getSupportActionBar()!=null) {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mBottomBar = (CardView) findViewById(R.id.bottom_bar);
+        setSupportActionBar(mToolbar);
+        mArticle = Article.sampleArticle(this);
+        mAppBarView = (AppBarLayout) findViewById(R.id.appbar_view);
+
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setTitle("Security"); //Article Category
         }
 
-        prefs = getSharedPreferences("MedhajAppPreferences", Context.MODE_PRIVATE);
-        Typeface lato =Typeface.createFromAsset(getAssets(), "Lato-Light.ttf");
 
-        mBottomBar = (TabLayout) findViewById(R.id.bottom_bar);
-        setUpBottomBar();
-        mBottomBar.setTabMode(TabLayout.MODE_FIXED);
-        mBottomBar.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mFontSizeIcon = (ImageView) findViewById(R.id.font);
+        mUISwitchIcon = (ImageView) findViewById(R.id.color);
+        mBookmarkIcon = (ImageView) findViewById(R.id.bookmark);
+        mShareIcon = (ImageView) findViewById(R.id.share);
+
+        mFontSizeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                if(tab.getPosition()==1) {
-                    //change text size
-                    showTextSizeSelectionDialog();
-                }
-                else if(tab.getPosition() == 2) {
-                    //toggle dark UI
-                    toggleNightMode(ArticleActivity.this);
-                }
-                else if(tab.getPosition() == 3) {
-                    //download article to local database
-                    downloadArticle();
-                }
-                else if(tab.getPosition() == 4) {
-                    //start share
-                    Intent share = new Intent(Intent.ACTION_SEND);
-                    share.setType("text/plain");
-                    String shareBody = "Medhaj News"; // replace with article link
-                    String shareSubject = "Shared via Meddhaj News App"; //share subject
-                    share.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
-                    share.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                    startActivity(Intent.createChooser(share, "Share via"));
-                }
-                /*
-                since we used tabs instead of buttons, we need to reset them so that the same selection
-                can be made twice. tab(0) is the Medhaj logo.
-                 */
-                mBottomBar.getTabAt(0).select();
+            public void onClick(View v) {
+                //change text size
+                showTextSizeSelectionDialog();
             }
+        });
+        mUISwitchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+            public void onClick(View v) {
+                //toggle dark UI
+                toggleNightMode(ArticleActivity.this);
+            }
+        });
+        mBookmarkIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTabReselected(TabLayout.Tab tab){}
+            public void onClick(View v) {
+                //download article to local database
+                downloadArticle();
+            }
+        });
+        mShareIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //start share
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("text/plain");
+                String shareBody = "Medhaj News"; // replace with article link
+                String shareSubject = "Shared via Meddhaj News App"; //share subject
+                share.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
+                share.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(share, "Share via"));
+            }
         });
 
+        prefs = getSharedPreferences("MedhajAppPreferences", Context.MODE_PRIVATE);
+        Typeface lato = Typeface.createFromAsset(getAssets(), "Lato-Light.ttf");
+
+
+//        mBottomBar = (TabLayout) findViewById(R.id.bottom_bar);
+//        setUpBottomBar();
+//        mBottomBar.setTabMode(TabLayout.MODE_FIXED);
+//        mBottomBar.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//
+//                if (tab.getPosition() == 1) {
+//
+//                } else if (tab.getPosition() == 2) {
+//
+//                } else if (tab.getPosition() == 3) {
+//
+//                } else if (tab.getPosition() == 4) {
+//
+//                }
+//                /*
+//                since we used tabs instead of buttons, we need to reset them so that the same selection
+//                can be made twice. tab(0) is the Medhaj logo.
+//                 */
+//                mBottomBar.getTabAt(0).select();
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//            }
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {
+//            }
+//        });
+//
+
         mContentHolder = (LinearLayout) findViewById(R.id.content_holder);
-        ImageView articleImageView = (ImageView) findViewById(R.id.main_image);
+        mArticleImageView = (ImageView) findViewById(R.id.main_image);
         mContentTextView = (TextView) findViewById(R.id.main_content);
         mTitleTextView = (TextView) findViewById(R.id.content_title);
         mAuthorTextView = (TextView) findViewById(R.id.content_author);
@@ -125,71 +186,70 @@ public class ArticleActivity extends AppCompatActivity {
         mUpdateTextView = (TextView) findViewById(R.id.content_update_time);
         mDateTextView = (TextView) findViewById(R.id.content_date);
         mContentTextView.setTypeface(lato);
-        articleImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent gallery = new Intent(ArticleActivity.this, GalleryActivity.class);
-                startActivity(gallery);
-            }
-        });
+        if (mArticleImageView != null) {
+            mArticleImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent gallery = new Intent(ArticleActivity.this, GalleryActivity.class);
+                    startActivity(gallery);
+                }
+            });
+        }
         mContentTextView.setTextSize(prefs.getInt("font_size", 16));
         mTitleTextView.setTextSize(prefs.getInt("font_size", 16) + 8);
         /*
             initialise oldtextcolors before calling nightmodetoggle
          */
-        oldtextColors = mContentTextView.getTextColors();
+        oldtextColors = mAuthorTextView.getTextColors();
         ObservableScrollView scrollView = (ObservableScrollView) findViewById(R.id.main_scrollView);
         mContentTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isUIfull) {
+                if (isUIfull) {
                     toggleUIElements(ArticleActivity.this, true);
                 } else {
                     toggleUIElements(ArticleActivity.this, false);
                 }
             }
         });
-        assert scrollView != null;
-        scrollView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-            @Override
-            public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-            }
-
-            @Override
-            public void onDownMotionEvent() {
-//                toggleUIElements(false);
-            }
-
-            @Override
-            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-//                toggleUIElements(true);
-                //UP is down and DOWN is up
-                if(scrollState == ScrollState.UP) {
-                    toggleUIElements(ArticleActivity.this, false);
-                } else {
-                    toggleUIElements(ArticleActivity.this, true);
+        if(scrollView!=null) {
+            scrollView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+                @Override
+                public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
                 }
-            }
 
-        });
+                @Override
+                public void onDownMotionEvent() {
+                }
+
+                @Override
+                public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                    //UP is down and DOWN is up
+                    if (scrollState == ScrollState.UP) {
+                        toggleUIElements(ArticleActivity.this, false);
+                    } else {
+                        toggleUIElements(ArticleActivity.this, true);
+                    }
+                }
+
+            });
+        }
         /*
         load image after everything to keep focus on top of view
          */
-        if(articleImageView!=null) {
-            Glide.with(this).load(R.drawable.code).centerCrop().crossFade().into(articleImageView);
-        }
+        Glide.with(this).load(R.drawable.code).centerCrop().crossFade().into(mArticleImageView);
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if(prefs.getBoolean("is_ui_state_dark", false)) {
+        if (prefs.getBoolean("is_ui_state_dark", false)) {
             toggleNightMode(this);
         }
     }
 
     private void toggleUIElements(Context context, boolean showElements) {
-        if(showElements && isUIfull && getSupportActionBar() != null) {
+        if (showElements && isUIfull && getSupportActionBar() != null) {
             getSupportActionBar().show();
             isUIfull = false;
             mBottomBar.setVisibility(View.VISIBLE);
@@ -202,7 +262,7 @@ public class ArticleActivity extends AppCompatActivity {
 
     private void toggleNightMode(Context context) {
         //since the number of elements is small, every element will be separately toggled
-        if(!isUIdark) {
+        if (!isUIdark) {
             //make it dark
             isUIdark = true;
             mContentTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
@@ -218,6 +278,18 @@ public class ArticleActivity extends AppCompatActivity {
             mDateTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mDateTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             mContentHolder.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
+            //toolbar
+            mToolbar.setNavigationIcon(R.drawable.ic_back_dark);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.white));
+            mAppBarView.setBackgroundColor(ContextCompat.getColor(context, R.color.actionBarDark));
+            getSupportActionBar().setBackgroundDrawable(
+                    new ColorDrawable(ContextCompat.getColor(context, R.color.actionBarDark)));
+            //Bottombar
+            mBottomBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bottomBarDark));
+            switchBottombarIcons(true, context);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.statusBarDark));
+            }
         } else {
             //make it light
             isUIdark = false;
@@ -234,6 +306,19 @@ public class ArticleActivity extends AppCompatActivity {
             mDateTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mDateTextView.setTextColor(oldtextColors);
             mContentHolder.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
+            //toolbar
+            mToolbar.setNavigationIcon(R.drawable.ic_back_light);
+            mToolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.darkui));
+            mAppBarView.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+            getSupportActionBar().setBackgroundDrawable(
+                    new ColorDrawable(ContextCompat.getColor(context, R.color.white)));
+            switchBottombarIcons(false, context);
+            //bottombar
+            mBottomBar.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+            }
+
         }
         Log.d(TAG, "toggleNightMode: " + String.valueOf(isUIdark));
     }
@@ -242,44 +327,57 @@ public class ArticleActivity extends AppCompatActivity {
         Log.d(TAG, "downloadArticle:");
         //download into local database
         if (!isArticleSaved) {
-            Toast.makeText(ArticleActivity.this, R.string.download_toast, Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.download_toast), false);
             isArticleSaved = true;
-            mBottomBar.getTabAt(3).setIcon(R.drawable.ic_saved_offline);
-        }
-        else {
-            Toast.makeText(ArticleActivity.this, R.string.article_delete, Toast.LENGTH_SHORT).show();
+            mBookmarkIcon.setImageResource(R.drawable.ic_saved_offline);
+        } else {
+            showToast(getString(R.string.article_delete), false);
             isArticleSaved = false; //let a method handle this variable and edit the database
-            mBottomBar.getTabAt(3).setIcon(R.drawable.ic_save_offline);
+            mBookmarkIcon.setImageResource(R.drawable.ic_save_offline);
+        }
+        if(isUIdark) {
+            applyThemeToDrawable(this, mBookmarkIcon.getDrawable());
         }
     }
 
     private void showTextSizeSelectionDialog() {
         Log.d(TAG, "showTextSizeSelectionDialog: ");
         final Dialog fontSelectionDialog = new Dialog(ArticleActivity.this);
-        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.font_picker_dialog,
-                (ViewGroup)findViewById(R.id.base));
+                (ViewGroup) findViewById(R.id.base));
         fontSelectionDialog.setContentView(layout);
 
         final DiscreteSeekBar seekBar = (DiscreteSeekBar) layout.findViewById(R.id.font_seekbar);
+        ImageView imageView = (ImageView) layout.findViewById(R.id.fontsizesmall);
+        if(isUIdark) {
+            applyThemeToDrawable(this, imageView.getDrawable());
+            ((LinearLayout) layout.findViewById(R.id.base)).setBackgroundColor(
+                    ContextCompat.getColor(this, R.color.fontDialogDark)
+            );
+        }
         seekBar.setProgress(prefs.getInt("font_size_multiplier", 0));
         seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser) {
+                if (fromUser) {
                     /*
                     view         initial sizes    maximum sizes
                     content        16sp               33sp
                     title          24sp               41sp
                      */
                     mContentTextView.setTextSize((progress));
-                    mTitleTextView.setTextSize((progress+8));
+                    mTitleTextView.setTextSize((progress + 8));
                 }
             }
+
             @Override
-            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {}
+            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
+            }
+
             @Override
-            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {}
+            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
+            }
         });
         fontSelectionDialog.setCancelable(true);
         fontSelectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -300,16 +398,6 @@ public class ArticleActivity extends AppCompatActivity {
         fontSelectionDialog.show();
     }
 
-    private void setUpBottomBar() {
-        mBottomBar.removeAllTabs();
-        mBottomBar.addTab(mBottomBar.newTab().setIcon(R.drawable.medhaj_tab));
-        mBottomBar.addTab(mBottomBar.newTab().setIcon(R.drawable.ic_text_size));
-        mBottomBar.addTab(mBottomBar.newTab().setIcon(R.drawable.ic_night_mode_toggle));
-        mBottomBar.addTab(mBottomBar.newTab().setIcon(R.drawable.ic_save_offline));
-        mBottomBar.addTab(mBottomBar.newTab().setIcon(R.drawable.ic_share));
-
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -321,5 +409,41 @@ public class ArticleActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    void showToast(String text, boolean longDuration) {
+        if (mLastToast != null) mLastToast.cancel();
+        mLastToast = Toast.makeText(ArticleActivity.this, text,
+                longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+        mLastToast.setGravity(Gravity.CENTER, 0, 0);
+        mLastToast.show();
+    }
+
+    public void switchBottombarIcons(boolean makelight, Context context) {
+        if(makelight) {
+            applyThemeToDrawable(context, mFontSizeIcon.getDrawable());
+            applyThemeToDrawable(context, mUISwitchIcon.getDrawable());
+            applyThemeToDrawable(context, mBookmarkIcon.getDrawable());
+            applyThemeToDrawable(context, mShareIcon.getDrawable());
+        } else {
+            mFontSizeIcon.setImageResource(R.drawable.ic_text_size);
+            mUISwitchIcon.setImageResource(R.drawable.ic_night_mode_toggle);
+            if(!isArticleSaved) {
+                mBookmarkIcon.setImageResource(R.drawable.ic_save_offline);
+            } else {
+                mBookmarkIcon.setImageResource(R.drawable.ic_saved_offline);
+            }
+            mShareIcon.setImageResource(R.drawable.ic_share);
+        }
+    }
+
+    public void applyThemeToDrawable(Context context, Drawable image) {
+        if (image != null) {
+            PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(
+                    ContextCompat.getColor(context, R.color.lightIcon),
+                    PorterDuff.Mode.SRC_ATOP);
+
+            image.setColorFilter(porterDuffColorFilter);
+        }
     }
 }

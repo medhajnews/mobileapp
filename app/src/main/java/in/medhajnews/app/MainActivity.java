@@ -8,12 +8,12 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
-import android.widget.ImageView;
 
 
 public class MainActivity extends AppCompatActivity
@@ -27,19 +27,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 //        getSupportActionBar().
 
 
-        ImageView img = (ImageView) findViewById(R.id.imageView2);
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent article = new Intent(MainActivity.this, ArticleActivity.class);
-                startActivity(article);
-            }
-        });
+
         Button article_view = (Button) findViewById(R.id.article);
         article_view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         video_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent video = new Intent(MainActivity.this, VideoActivity.class);
+                Intent video = new Intent(MainActivity.this, BaseActivity.class);
                 startActivity(video);
             }
         });

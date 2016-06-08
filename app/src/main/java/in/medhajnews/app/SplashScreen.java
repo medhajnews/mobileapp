@@ -35,6 +35,7 @@ public class SplashScreen extends AppCompatActivity {
 
         networkingThread = new NetworkingThread(SplashScreen.this);
         networkingThread.execute();
+
     }
 
     private boolean isNetworkConnected() {
@@ -91,8 +92,10 @@ public class SplashScreen extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         //stop background tasks
-        if(networkingThread.getStatus() != AsyncTask.Status.FINISHED) {
-            networkingThread.cancel(true);
+        if(networkingThread!=null) {
+            if (networkingThread.getStatus() != AsyncTask.Status.FINISHED) {
+                networkingThread.cancel(true);
+            }
         }
     }
 

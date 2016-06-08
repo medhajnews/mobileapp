@@ -5,10 +5,15 @@
     <color name="colorAccent">#FF4081</color>
     <color name="icon_grey">#212121</color>
     <color name="bottom_bar_bg">#E4E4E4</color>
-    <color name="darkui">#212121</color>
+    <color name="darkui">#161616</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="article_title">#363636</color>
     <color name="article_info">#989898</color>
     <color name="article_content">#1F1F1F</color>
+    <color name="statusBarDark">#212121</color>
+    <color name="actionBarDark">#2B2B2B</color>
+    <color name="bottomBarDark">#2B2B2B</color>
+    <color name="lightIcon">#E0E0E0</color>
+    <color name="fontDialogDark">#3F3F3F</color>
 </resources>
