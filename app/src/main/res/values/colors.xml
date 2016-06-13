@@ -16,4 +16,7 @@
     <color name="bottomBarDark">#2B2B2B</color>
     <color name="lightIcon">#E0E0E0</color>
     <color name="fontDialogDark">#3F3F3F</color>
+    <color name="newsCardActivityBackground">#EEEEEE</color>
+    <color name="dark_icon">#99000000</color> <!-- 60% black-->
+    <color name="mid_grey">#40808080</color>
 </resources>

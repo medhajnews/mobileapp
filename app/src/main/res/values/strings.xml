@@ -6,12 +6,60 @@
 
     <string name="action_settings">Settings</string>
     <string name="article_main_image">Article Main Image</string>
-    <string name="sample_content_text">Lorem ipsum dolor, क्या ‘चुने’ जाने की हिम्मत जुटा पाएंगे राहुल गाँधी ! sit amet, consectetur adipiscing elit. Mauris ut justo sed ex rutrum dignissim. Vestibulum sed mi arcu. Morbi et pulvinar mauris, in finibus nibh. In hac habitasse platea dictumst. Proin vestibulum, ipsum a eleifend tristique, nisi est pretium quam, non pellentesque enim ante non nisi. Vestibulum semper mauris elit, non posuere ligula suscipit non. Sed diam sapien, vulputate in tellus ut, varius pretium dui. Nunc luctus est eget ornare ullamcorper.  Pellentesque vel purus in lorem molestie suscipit. Aenean rhoncus, nunc id fringilla consequat, lorem quam faucibus massa, in varius ipsum lacus ultrices risus. Curabitur vehicula in sem nec euismod. Vestibulum tristique mattis arcu eget tincidunt. In eget sapien orci. Curabitur rhoncus laoreet elit, a viverra felis aliquam ac. Sed dictum nibh diam, at imperdiet dolor accumsan id. Sed molestie malesuada scelerisque. Aliquam commodo sem orci, eu vestibulum lacus volutpat eget. Phasellus dapibus fermentum pretium. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed quis tempor magna, vel pellentesque nibh. Duis ultrices justo ultrices orci porttitor facilisis. Nulla nec sagittis magna.  Ut ac lectus id nunc fermentum ornare scelerisque eleifend sem. Duis at ipsum orci. In nec est eu ligula vulputate pulvinar ac in nisl. Integer consectetur massa leo, efficitur bibendum ligula vulputate pharetra. Sed pretium quis enim a vulputate. Aenean id enim nisi. Ut et dapibus tortor. Nam viverra ultrices felis ac varius. In vehicula quam sit amet nisi pellentesque finibus. Nulla facilisi.  Aliquam id turpis egestas lectus interdum scelerisque. Nullam elementum lectus eu ultricies vulputate. Integer eros nulla, scelerisque at aliquam eget, rhoncus accumsan urna. Nam felis massa, varius quis nulla sit amet, posuere condimentum tellus. Aenean nec magna efficitur, tincidunt odio in, accumsan ex. In non velit vel felis aliquet rutrum. Morbi imperdiet ex a sem euismod, ut dapibus augue auctor. Maecenas purus felis, fringilla tristique nisi quis, scelerisque blandit eros. Interdum et malesuada fames ac ante ipsum primis in faucibus.  Donec vehicula sagittis diam quis laoreet. Suspendisse quis lectus quis odio commodo venenatis ut vel neque. Curabitur sed arcu leo. Maecenas luctus at orci nec vestibulum. Praesent sodales est eu aliquam faucibus. Aliquam hendrerit lobortis lectus, non egestas justo fermentum eu. Integer sed massa in arcu sodales efficitur. Donec rutrum, nibh sit amet rutrum interdum, massa tellus aliquam magna, et volutpat justo est sit amet velit. Ut non sagittis orci. Nulla rutrum dignissim sem, eu aliquam ante convallis quis. Donec ac enim rhoncus, imperdiet eros in, aliquam massa. Quisque in hendrerit quam, a posuere enim. Ut sodales dictum semper. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</string>
+    <string name="sample_content_text">With the European championship starting in Paris on Saturday, all eyes will be on host France when its gets ball rolling against Romania in the Stade de France.
+
+World champion Germany will be targeting a first Euro title in 20 years while England seeks its first international success since the World Cup of 1996.
+
+Like always, the Euro will become a shopping mall for club managers to choose their stars from.
+
+Here comes the names of few players gearing up to make their move.
+
+
+
+Name: Alvaro Morata (Spain)
+
+Age: 23
+
+Position: Striker
+
+Current Club: Juventus
+
+
+
+Name: Antoine Greizmann (France)
+
+Age: 25
+
+Position: Forward
+
+Current Club: Atletico
+
+
+
+Name: Zlatan Ibrahimovic (Sweden)
+
+Age: 34
+
+Position: Forward
+
+Current Club: PSG
+
+
+
+
+
+Name: Christian Benteke (Belgium)
+
+Age: 25
+
+Position: Forward
+
+Current Club: Liverpool</string>
     <string name="download_toast">This article will be shortly available in the downloaded section</string>
     <string name="sample_author">by Anubhav</string>
     <string name="sample_title">Why relying on your memories could compromise your security</string>
     <string name="sample_date">Jun 2, 2016</string>
-    <string name="sample_update_time">UPDATED TODAY at 9:00 pm</string>
+    <string name="sample_update_time">TODAY at 9:00 pm</string>
     <string name="sample_area">DELHI</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Closed</string>
@@ -22,4 +70,8 @@
     <string name="title_activity_base">BaseActivity</string>
     <string name="action_search">Search</string>
     <string name="search_hint">Search Medhaj News</string>
+    <string name="sample_image_link">https://medhaj-staging.s3.amazonaws.com/uploads/photo/data_file/44675/indian_test_team.jpg</string>
+    <string name="sample_article_link">http://medhajnews.in/science_technology/news.php/pepsi-cola-like-oxygenated-drink-will-help-cure-cancer--34990--en</string>
+    <string name="title_activity_news_cards">NewsCardsActivity</string>
+    <string name="title_activity_news">Medhaj News</string>
 </resources>

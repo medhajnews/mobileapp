@@ -30,7 +30,7 @@ public class SplashScreen extends AppCompatActivity {
         ImageView applogo = (ImageView) findViewById(R.id.app_logo);
         ImageView appicon = (ImageView) findViewById(R.id.app_icon);
 
-        Glide.with(this).load(R.drawable.logo_128px).crossFade().fitCenter().into(applogo);
+        Glide.with(this).load(R.drawable.newslogo).crossFade().fitCenter().into(applogo);
         Glide.with(this).load(R.mipmap.ic_launcher).crossFade().into(appicon);
 
         networkingThread = new NetworkingThread(SplashScreen.this);

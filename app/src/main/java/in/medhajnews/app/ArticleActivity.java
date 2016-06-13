@@ -6,10 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,9 +16,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,12 +27,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -51,11 +55,11 @@ public class ArticleActivity extends AppCompatActivity {
     private boolean isArticleSaved = false;
     private LinearLayout mContentHolder;
     private ColorStateList oldtextColors;
-    private Toolbar mToolbar;
+//    private Toolbar mToolbar;
     private ImageView mArticleImageView;
     private Toast mLastToast;
-
     private SharedPreferences prefs;
+    private ImageButton back;
     /**
      * Preferences                  DefaultValue
      * //font_size                      0
@@ -86,24 +90,37 @@ public class ArticleActivity extends AppCompatActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
-        setContentView(R.layout.activity_article);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mBottomBar = (CardView) findViewById(R.id.bottom_bar);
-        setSupportActionBar(mToolbar);
-        mArticle = Article.sampleArticle(this);
-        mAppBarView = (AppBarLayout) findViewById(R.id.appbar_view);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Security"); //Article Category
+        Article article;
+        if(getIntent()!=null) {
+            article = getIntent().getParcelableExtra("Article");
+        } else {
+            article = Article.sampleArticle(this);
         }
+
+        back = (ImageButton) findViewById(R.id.back);
+
+        setContentView(R.layout.activity_article);
+//        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mBottomBar = (CardView) findViewById(R.id.bottom_bar);
+//        setSupportActionBar(mToolbar);
+        mArticle = Article.sampleArticle(this);
+//        mAppBarView = (AppBarLayout) findViewById(R.id.appbar_view);
+
+//        if (getSupportActionBar() != null && article!=null) {
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+//            getSupportActionBar().setTitle(article.Category);
+//        }
 
 
         mFontSizeIcon = (ImageView) findViewById(R.id.font);
         mUISwitchIcon = (ImageView) findViewById(R.id.color);
         mBookmarkIcon = (ImageView) findViewById(R.id.bookmark);
         mShareIcon = (ImageView) findViewById(R.id.share);
+
+        if(Boolean.parseBoolean(article.isArticleSaved)) {
+            mBookmarkIcon.setImageResource(R.drawable.ic_saved_offline);
+        }
 
         mFontSizeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,41 +158,7 @@ public class ArticleActivity extends AppCompatActivity {
         });
 
         prefs = getSharedPreferences("MedhajAppPreferences", Context.MODE_PRIVATE);
-        Typeface lato = Typeface.createFromAsset(getAssets(), "Lato-Light.ttf");
-
-
-//        mBottomBar = (TabLayout) findViewById(R.id.bottom_bar);
-//        setUpBottomBar();
-//        mBottomBar.setTabMode(TabLayout.MODE_FIXED);
-//        mBottomBar.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//
-//                if (tab.getPosition() == 1) {
-//
-//                } else if (tab.getPosition() == 2) {
-//
-//                } else if (tab.getPosition() == 3) {
-//
-//                } else if (tab.getPosition() == 4) {
-//
-//                }
-//                /*
-//                since we used tabs instead of buttons, we need to reset them so that the same selection
-//                can be made twice. tab(0) is the Medhaj logo.
-//                 */
-//                mBottomBar.getTabAt(0).select();
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//            }
-//        });
-//
+//        Typeface lato = Typeface.createFromAsset(getAssets(), "Lato-Light.ttf");
 
         mContentHolder = (LinearLayout) findViewById(R.id.content_holder);
         mArticleImageView = (ImageView) findViewById(R.id.main_image);
@@ -185,7 +168,7 @@ public class ArticleActivity extends AppCompatActivity {
         mAreaTextView = (TextView) findViewById(R.id.content_area);
         mUpdateTextView = (TextView) findViewById(R.id.content_update_time);
         mDateTextView = (TextView) findViewById(R.id.content_date);
-        mContentTextView.setTypeface(lato);
+//        mContentTextView.setTypeface(lato);
         if (mArticleImageView != null) {
             mArticleImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -196,7 +179,13 @@ public class ArticleActivity extends AppCompatActivity {
             });
         }
         mContentTextView.setTextSize(prefs.getInt("font_size", 16));
-        mTitleTextView.setTextSize(prefs.getInt("font_size", 16) + 8);
+        mContentTextView.setText(article.ArticleContent);
+        mTitleTextView.setTextSize(prefs.getInt("font_size", 16) + 10);
+        mTitleTextView.setText(article.ArticleTitle);
+        mAuthorTextView.setText(article.ArticleAuthor);
+        mAreaTextView.setText(article.ArticleArea);
+        mDateTextView.setText(article.ArticleDate);
+        mUpdateTextView.setText(article.ArticleUpdateTime);
         /*
             initialise oldtextcolors before calling nightmodetoggle
          */
@@ -234,10 +223,8 @@ public class ArticleActivity extends AppCompatActivity {
 
             });
         }
-        /*
-        load image after everything to keep focus on top of view
-         */
-        Glide.with(this).load(R.drawable.code).centerCrop().crossFade().into(mArticleImageView);
+        Glide.with(this).load(article.ArticleImageLink).listener(mainImageLoadListener)
+                .fitCenter().crossFade().into(mArticleImageView);
     }
 
     @Override
@@ -249,12 +236,12 @@ public class ArticleActivity extends AppCompatActivity {
     }
 
     private void toggleUIElements(Context context, boolean showElements) {
-        if (showElements && isUIfull && getSupportActionBar() != null) {
-            getSupportActionBar().show();
+        if (showElements && isUIfull) {
+//            getSupportActionBar().show();
             isUIfull = false;
             mBottomBar.setVisibility(View.VISIBLE);
-        } else if (!showElements && !isUIfull && getSupportActionBar() != null) {
-            getSupportActionBar().hide();
+        } else if (!showElements && !isUIfull) {
+//            getSupportActionBar().hide();
             isUIfull = true;
             mBottomBar.setVisibility(View.GONE);
         }
@@ -269,8 +256,8 @@ public class ArticleActivity extends AppCompatActivity {
             mContentTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             mAuthorTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mAuthorTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
-            mTitleTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
-            mTitleTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
+//            mTitleTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
+//            mTitleTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             mAreaTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mAreaTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             mUpdateTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
@@ -279,11 +266,11 @@ public class ArticleActivity extends AppCompatActivity {
             mDateTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             mContentHolder.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             //toolbar
-            mToolbar.setNavigationIcon(R.drawable.ic_back_dark);
-            mToolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.white));
+//            mToolbar.setNavigationIcon(R.drawable.ic_back_dark);
+//            mToolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.white));
             mAppBarView.setBackgroundColor(ContextCompat.getColor(context, R.color.actionBarDark));
-            getSupportActionBar().setBackgroundDrawable(
-                    new ColorDrawable(ContextCompat.getColor(context, R.color.actionBarDark)));
+//            getSupportActionBar().setBackgroundDrawable(
+//                    new ColorDrawable(ContextCompat.getColor(context, R.color.actionBarDark)));
             //Bottombar
             mBottomBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bottomBarDark));
             switchBottombarIcons(true, context);
@@ -297,8 +284,8 @@ public class ArticleActivity extends AppCompatActivity {
             mContentTextView.setTextColor(ContextCompat.getColor(context, R.color.article_content));
             mAuthorTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mAuthorTextView.setTextColor(oldtextColors);
-            mTitleTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            mTitleTextView.setTextColor(ContextCompat.getColor(context, R.color.article_title));
+//            mTitleTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
+//            mTitleTextView.setTextColor(ContextCompat.getColor(context, R.color.article_title));
             mAreaTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mAreaTextView.setTextColor(oldtextColors);
             mUpdateTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
@@ -307,11 +294,11 @@ public class ArticleActivity extends AppCompatActivity {
             mDateTextView.setTextColor(oldtextColors);
             mContentHolder.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             //toolbar
-            mToolbar.setNavigationIcon(R.drawable.ic_back_light);
-            mToolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.darkui));
+//            mToolbar.setNavigationIcon(R.drawable.ic_back_light);
+//            mToolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.darkui));
             mAppBarView.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
-            getSupportActionBar().setBackgroundDrawable(
-                    new ColorDrawable(ContextCompat.getColor(context, R.color.white)));
+//            getSupportActionBar().setBackgroundDrawable(
+//                    new ColorDrawable(ContextCompat.getColor(context, R.color.white)));
             switchBottombarIcons(false, context);
             //bottombar
             mBottomBar.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
@@ -367,7 +354,7 @@ public class ArticleActivity extends AppCompatActivity {
                     title          24sp               41sp
                      */
                     mContentTextView.setTextSize((progress));
-                    mTitleTextView.setTextSize((progress + 8));
+                    mTitleTextView.setTextSize((progress + 10));
                 }
             }
 
@@ -446,4 +433,44 @@ public class ArticleActivity extends AppCompatActivity {
             image.setColorFilter(porterDuffColorFilter);
         }
     }
+
+    private RequestListener mainImageLoadListener = new RequestListener<String, GlideDrawable>() {
+        @Override
+        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, String model,
+                                       Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                       boolean isFirstResource) {
+            final Bitmap bitmap = GlideUtils.getBitmap(resource);
+            final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    24, ArticleActivity.this.getResources().getDisplayMetrics());
+            Palette.from(bitmap)
+                    .maximumColorCount(3)
+                    .clearFilters() /* by default palette ignore certain hues
+                        (e.g. pure black/white) but we don't want this. */
+                    .setRegion(0, 0, bitmap.getWidth() - 1, twentyFourDip) /* - 1 to work around
+                        https://code.google.com/p/android/issues/detail?id=191013 */
+                    .generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            boolean isDark;
+                            @ColorUtils.Lightness int lightness = ColorUtils.isDark(palette);
+                            if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
+                                isDark = ColorUtils.isDark(bitmap, bitmap.getWidth() / 2, 0);
+                            } else {
+                                isDark = lightness == ColorUtils.IS_DARK;
+                            }
+
+                            if (!isDark) { // make back icon dark on light images
+                                back.setColorFilter(ContextCompat.getColor(
+                                        ArticleActivity.this, R.color.dark_icon));
+                            }
+                        }
+                    });
+            return false;
+        }
+    };
 }
