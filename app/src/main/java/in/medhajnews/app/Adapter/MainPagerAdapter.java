@@ -36,7 +36,7 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "RECOMMENDED";
+                return "FOR YOu";
             case 1:
                 return "INDIA";
             case 2:

@@ -1,7 +1,9 @@
-package in.medhajnews.app;
+package in.medhajnews.app.Utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+
+import in.medhajnews.app.R;
 
 /**
  * Created by bhav on 6/13/16 for the Medhaj News Project.

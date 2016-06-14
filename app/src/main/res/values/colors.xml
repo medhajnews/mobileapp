@@ -18,5 +18,7 @@
     <color name="fontDialogDark">#3F3F3F</color>
     <color name="newsCardActivityBackground">#EEEEEE</color>
     <color name="dark_icon">#99000000</color> <!-- 60% black-->
+    <color name="inline_action_icon">#ff757575</color> <!-- grey 600 -->
     <color name="mid_grey">#40808080</color>
+    <color name="dark_overlay">#66000000</color>
 </resources>

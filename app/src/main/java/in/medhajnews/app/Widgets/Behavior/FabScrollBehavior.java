@@ -7,7 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.View;
 
-import in.medhajnews.app.Utils;
+import in.medhajnews.app.Utils.Utils;
 
 /**
  * Created by bhav on 6/13/16 for the Medhaj News Project.

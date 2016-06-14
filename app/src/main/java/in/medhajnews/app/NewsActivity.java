@@ -1,15 +1,19 @@
 package in.medhajnews.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -37,6 +41,8 @@ public class NewsActivity extends AppCompatActivity {
     private ViewPager mViewPager;
 
     private FloatingActionButton mMainFab;
+    private FloatingActionButton miniFab1, miniFab2, miniFab3;
+    private CardView cardsavedarticles, cardsettings, cardsharestory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +50,34 @@ public class NewsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news);
 
         mMainFab = (FloatingActionButton) findViewById(R.id.news_fab);
+        miniFab1 = (FloatingActionButton) findViewById(R.id.view);
+        miniFab2 = (FloatingActionButton) findViewById(R.id.view2);
+        final FrameLayout relativeLayout = (FrameLayout) findViewById(R.id.overlay);
+
+        cardsavedarticles = (CardView) findViewById(R.id.view7);
+        cardsettings = (CardView) findViewById(R.id.view8);
+        cardsharestory = (CardView) findViewById(R.id.view9);
 
         mMainFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View dialog = getLayoutInflater().inflate(R.layout.news_dialog,
-                        (ViewGroup) findViewById(R.id.base));
-                new AlertDialog.Builder(NewsActivity.this)
-                        .setCancelable(true)
-                        .setView(dialog)
-                        .show();
+                if(shown) {
+                    shown = false;
+                    miniFab1.setVisibility(View.GONE);
+                    miniFab2.setVisibility(View.GONE);
+                    cardsharestory.setVisibility(View.GONE);
+                    cardsettings.setVisibility(View.GONE);
+                    cardsavedarticles.setVisibility(View.GONE);
+                    relativeLayout.setBackgroundColor(ContextCompat.getColor(NewsActivity.this, android.R.color.transparent));
+                } else {
+                    shown = true;
+                    miniFab1.setVisibility(View.VISIBLE);
+                    miniFab2.setVisibility(View.VISIBLE);
+                    cardsettings.setVisibility(View.VISIBLE);
+                    cardsharestory.setVisibility(View.VISIBLE);
+                    cardsavedarticles.setVisibility(View.VISIBLE);
+                    relativeLayout.setBackgroundColor(ContextCompat.getColor(NewsActivity.this, R.color.dark_overlay));
+                }
 
             }
         });
@@ -118,25 +142,27 @@ public class NewsActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_news, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_news, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_search) {
+            Intent search = new Intent(NewsActivity.this, SearchActivity.class);
+            startActivity(search);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

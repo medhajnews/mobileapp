@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package in.medhajnews.app;
+package in.medhajnews.app.Utils;
 
 import android.graphics.Bitmap;
 

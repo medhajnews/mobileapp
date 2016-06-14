@@ -45,6 +45,18 @@
         <item name="android:textColorHint">@color/article_info</item>
     </style>
 
+    <style name="ToolbarTheme"
+        parent="Widget.AppCompat.Toolbar">
+        <item name="actionMenuTextColor">#1bff3a</item>
+        <item name="colorControlNormal">#FFF</item>
+        <item name="colorControlActivated">#FFF</item>
+        <item name="android:textColorPrimary">#FFF</item>
+        <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
+        <item name="selectableItemBackground">@drawable/mid_grey_ripple</item>
+        <item name="selectableItemBackgroundBorderless">@drawable/mid_grey_ripple</item>
+        <item name="colorControlHighlight">@color/mid_grey</item>
+    </style>
+
     <!--<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />-->
 
 

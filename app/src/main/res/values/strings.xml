@@ -74,4 +74,7 @@ Current Club: Liverpool</string>
     <string name="sample_article_link">http://medhajnews.in/science_technology/news.php/pepsi-cola-like-oxygenated-drink-will-help-cure-cancer--34990--en</string>
     <string name="title_activity_news_cards">NewsCardsActivity</string>
     <string name="title_activity_news">Medhaj News</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="action_share_your_story">Share Story</string>
+    <string name="search">Search</string>
 </resources>

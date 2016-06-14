@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package in.medhajnews.app;
+package in.medhajnews.app.Utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -30,8 +30,11 @@ import android.support.v7.graphics.Palette;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import in.medhajnews.app.Utils.MathUtils;
+
 /**
  * Utility methods for working with colors.
+ * Borrowed from the Plaid App
  */
 public class ColorUtils {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package in.medhajnews.app;
+package in.medhajnews.app.Utils;
 
 /**
  * Borrowed from github.com/romannurik/muzei

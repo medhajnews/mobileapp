@@ -14,14 +14,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <LinearLayout
             android:id="@+id/content_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:id="@+id/main_image"
                 android:layout_width="match_parent"
@@ -39,11 +42,44 @@
                 android:layout_gravity="center_horizontal|bottom"
                 android:padding="16dp"
                 android:clickable="false"
+                android:fontFamily="serif"
                 android:layout_marginBottom="4dp"
-                android:text="Why relying on your memory could compromise your security"
                 android:textColor="@color/white"
                 android:textIsSelectable="false"
-                android:textSize="26sp" />
+                android:textSize="22sp" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/back_arrow"
+                    android:layout_width="?android:actionBarSize"
+                    android:layout_height="?android:actionBarSize"
+                    android:layout_marginEnd="@dimen/padding_normal"
+                    android:layout_marginBottom="@dimen/padding_normal"
+                    android:src="@drawable/ic_arrow_back"
+                    android:background="@drawable/mid_grey_ripple"
+                    android:contentDescription="@null" />
+
+                <ImageButton
+                    android:id="@+id/search_icon"
+                    android:layout_width="?android:actionBarSize"
+                    android:layout_height="?android:actionBarSize"
+                    android:layout_marginBottom="@dimen/padding_normal"
+                    android:src="@drawable/ic_search"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/mid_grey_ripple"
+                    android:contentDescription="@null" />
+
+                </RelativeLayout>
+
+
+            </FrameLayout>
         </FrameLayout>
 
             <LinearLayout
