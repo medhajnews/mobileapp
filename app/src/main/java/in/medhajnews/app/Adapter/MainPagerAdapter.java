@@ -32,6 +32,10 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
         return 5;
     }
 
+    /**
+     * Don't forget to add Category priorities in {@link in.medhajnews.app.Data.Priority}
+     * on adding more tabs.
+     */
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {

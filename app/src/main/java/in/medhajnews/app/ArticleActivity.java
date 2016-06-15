@@ -7,14 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -28,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,7 +60,7 @@ public class ArticleActivity extends AppCompatActivity {
     private ColorStateList oldtextColors;
 
     private ImageView mArticleImageView;
-    private Toast mLastToast;
+    private Toast mToast;
     private SharedPreferences prefs;
     private ImageButton mBackArrow, mSearchIcon;
     /**
@@ -158,12 +158,13 @@ public class ArticleActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //download article to local database
-                downloadArticle();
+                downloadArticle(ArticleActivity.this);
             }
         });
         mShareIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //todo (LP): check if share compilation is faster in production builds
                 //animate icon if API > 21
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mShareIcon !=null) {
                     ((AnimatedVectorDrawable) mShareIcon.getDrawable()).start();
@@ -215,11 +216,7 @@ public class ArticleActivity extends AppCompatActivity {
         mContentTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isUIfull) {
-                    toggleUIElements(true);
-                } else {
-                    toggleUIElements(false);
-                }
+                toggleUIElements();
             }
         });
         mContentTextView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -230,6 +227,7 @@ public class ArticleActivity extends AppCompatActivity {
                 return true;
             }
         });
+        //todo : replace observable scrollview with observable recyclerview
         if(scrollView!=null) {
             scrollView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
                 @Override
@@ -244,9 +242,9 @@ public class ArticleActivity extends AppCompatActivity {
                 public void onUpOrCancelMotionEvent(ScrollState scrollState) {
                     //UP is down and DOWN is up
                     if (scrollState == ScrollState.UP) {
-                        toggleUIElements(false);
+                        toggleUIElements();
                     } else {
-                        toggleUIElements(true);
+                        toggleUIElements();
                     }
                 }
 
@@ -265,20 +263,20 @@ public class ArticleActivity extends AppCompatActivity {
         }
     }
 
-    private void toggleUIElements(boolean showElements) {
-        if (showElements && isUIfull) {
-//            getSupportActionBar().show();
+    private void toggleUIElements() {
+        //todo : fix animation
+        if (isUIfull) {
             isUIfull = false;
             mBottomBar.setVisibility(View.VISIBLE);
-        } else if (!showElements && !isUIfull) {
-//            getSupportActionBar().hide();
+//            bottomBarAnimateIn();
+        } else {
             isUIfull = true;
             mBottomBar.setVisibility(View.GONE);
+//            bottomBarAnimateOut();
         }
     }
 
     private void toggleNightMode(Context context) {
-        //since the number of elements is small, every element will be separately toggled
         if (!isUIdark) {
             //make it dark
             isUIdark = true;
@@ -323,7 +321,7 @@ public class ArticleActivity extends AppCompatActivity {
         }
     }
 
-    private void downloadArticle() {
+    private void downloadArticle(Context context) {
         //todo : download into local database
         if (!isArticleSaved) {
             showToast(getString(R.string.download_toast), false);
@@ -335,7 +333,7 @@ public class ArticleActivity extends AppCompatActivity {
             mBookmarkIcon.setImageResource(R.drawable.ic_save_offline);
         }
         if(isUIdark) {
-            applyThemeToDrawable(this, mBookmarkIcon.getDrawable());
+            ColorUtils.applyThemeToDrawable(this, mBookmarkIcon.getDrawable(), R.color.lightIcon);
         }
     }
 
@@ -349,7 +347,7 @@ public class ArticleActivity extends AppCompatActivity {
         final DiscreteSeekBar seekBar = (DiscreteSeekBar) layout.findViewById(R.id.font_seekbar);
         ImageView imageView = (ImageView) layout.findViewById(R.id.fontsizesmall);
         if(isUIdark) {
-            applyThemeToDrawable(this, imageView.getDrawable());
+            ColorUtils.applyThemeToDrawable(this, imageView.getDrawable(), R.color.lightIcon);
             layout.findViewById(R.id.base).setBackgroundColor(
                     ContextCompat.getColor(this, R.color.fontDialogDark)
             );
@@ -405,20 +403,12 @@ public class ArticleActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    void showToast(String text, boolean longDuration) {
-        if (mLastToast != null) mLastToast.cancel();
-        mLastToast = Toast.makeText(ArticleActivity.this, text,
-                longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
-        mLastToast.setGravity(Gravity.CENTER, 0, 0);
-        mLastToast.show();
-    }
-
     public void switchBottombarIcons(boolean makelight, Context context) {
         if(makelight) {
-            applyThemeToDrawable(context, mFontSizeIcon.getDrawable());
-            applyThemeToDrawable(context, mUISwitchIcon.getDrawable());
-            applyThemeToDrawable(context, mBookmarkIcon.getDrawable());
-            applyThemeToDrawable(context, mShareIcon.getDrawable());
+            ColorUtils.applyThemeToDrawable(context, mFontSizeIcon.getDrawable(), R.color.lightIcon);
+            ColorUtils.applyThemeToDrawable(context, mUISwitchIcon.getDrawable(), R.color.lightIcon);
+            ColorUtils.applyThemeToDrawable(context, mBookmarkIcon.getDrawable(), R.color.lightIcon);
+            ColorUtils.applyThemeToDrawable(context, mShareIcon.getDrawable(), R.color.lightIcon);
         } else {
             mFontSizeIcon.setImageResource(R.drawable.ic_text_size);
             mUISwitchIcon.setImageResource(R.drawable.ic_night_mode_toggle);
@@ -431,15 +421,7 @@ public class ArticleActivity extends AppCompatActivity {
         }
     }
 
-    public void applyThemeToDrawable(Context context, Drawable image) {
-        if (image != null) {
-            PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(
-                    ContextCompat.getColor(context, R.color.lightIcon),
-                    PorterDuff.Mode.SRC_ATOP);
 
-            image.setColorFilter(porterDuffColorFilter);
-        }
-    }
 
     private RequestListener mainImageLoadListener = new RequestListener<String, GlideDrawable>() {
         @Override
@@ -485,4 +467,65 @@ public class ArticleActivity extends AppCompatActivity {
             return false;
         }
     };
+
+    private void bottomBarAnimateIn() {
+        Animation slideUpAnimation = AnimationUtils.loadAnimation(ArticleActivity.this,
+                R.anim.fab_slide_up);
+        slideUpAnimation.setInterpolator(new FastOutSlowInInterpolator());
+        slideUpAnimation.setDuration(200L);
+        slideUpAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mBottomBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mBottomBar.startAnimation(slideUpAnimation);
+    }
+
+    private void bottomBarAnimateOut() {
+        Animation slideDownAnimation = AnimationUtils.loadAnimation(ArticleActivity.this,
+                R.anim.fab_slide_down);
+        slideDownAnimation.setDuration(200L);
+        slideDownAnimation.setInterpolator(new FastOutSlowInInterpolator());
+        slideDownAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mBottomBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mBottomBar.startAnimation(slideDownAnimation);
+    }
+
+    /**
+     * Dismisses the stale toast before making a fresh one
+     * @param text (String) toast text
+     * @param longDuration (boolean) toast duration
+     */
+    public void showToast( String text, boolean longDuration) {
+        if (mToast != null) mToast.cancel();
+        mToast = Toast.makeText(ArticleActivity.this, text,
+                longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.show();
+    }
 }

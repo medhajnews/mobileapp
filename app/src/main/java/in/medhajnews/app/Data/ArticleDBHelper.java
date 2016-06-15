@@ -15,21 +15,52 @@ public class ArticleDBHelper extends SQLiteOpenHelper {
     // UPDATE VERSION after changing schema
     private static final int DATABASE_VERSION = 1;
 
-    private static final String DATABASE_NAME = "medhajarticles.db";
+    private static final String DATABASE_NAME = "medhaj.db";
 
     /**
-     * Article Table
-     * _____________________________________________________________________________________________________________
-     *| ID | Link | Image Link | Title | Author | Date | Update Time | Area | Content | Likes | Dislikes | Comments |
-     * -------------------------------------------------------------------------------------------------------------
+     * Article Table (for offline viewing)
+     * ___________________________________________________________________________________________
+     *| ID | Link | Image Link | Title | Author | Date | Update Time | Area | Content | Photo Art |
+     * -------------------------------------------------------------------------------------------
      *
-     *  User Table
+     *
+     *  User Table (for user details, 1 row)
      * _____________________________________________
      * | User ID | Name | Email | Facebook | Google |
      * ---------------------------------------------
      *
+     *
+     * Category Frequency will be stored in the Shared Preferences as Category-Frequency pairs
+     *
+     *
+     * Recommendation Table (for recommended section, 11 rows)
+     *
+     * ______________________________
+     * | Category | Rank | Important |
+     * ------------------------------
+     *
+     * Ranking is based on simple frequency of category viewing. The recommendation table will hold
+     * only the top 4 categories and display 10 articles. The category rank will be updated every
+     * time an article is viewed. If an article is viewed from the recommended section the rank will
+     * not be updated.
+     *
+     * Since the ranking is based on simple frequency, it is possible for different categories to
+     * have equal ranks. In such cases Category priority will decide the the ranking.
+     *
+     * Check {@link in.medhajnews.app.Data.Priority} for Category priority.
+     *
+     * Rank 0 - Breaking NEWS
+     * Rank 1 - 4 of the newest articles from the category
+     * Rank 2 - 3 articles
+     * Rank 3 - 2 articles
+     * Rank 4 - 1 article
+     *
+     * The recommendation table will also have a importance column. Only very important news will
+     * be the 11th article in the recommendation table. This article will be placed first in the
+     * recommended section for a select time period.
      */
 
+    //todo : intent and broadcast receivers
     private final static String USER_TABLE_NAME = "user";
     private final static String ARTICLES_TABLE_NAME = "articles";
 

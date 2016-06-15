@@ -16,8 +16,12 @@
 
 package in.medhajnews.app.Utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.CheckResult;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
@@ -25,12 +29,11 @@ import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import in.medhajnews.app.Utils.MathUtils;
 
 /**
  * Utility methods for working with colors.
@@ -176,6 +179,22 @@ public class ColorUtils {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({IS_LIGHT, IS_DARK, LIGHTNESS_UNKNOWN})
     public @interface Lightness {
+    }
+
+    /**
+     * Applies PorterDuff filter to the drawable (to change color of drawable)
+     *
+     * @param context (Context) from the calling Activity/Fragment
+     * @param image (Drawable) to apply filter to
+     */
+    public static void applyThemeToDrawable(Context context, Drawable image, int resourceId ) {
+        if (image != null && resourceId != 0) { //0 is an illegal identifier
+            PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(
+                    ContextCompat.getColor(context, resourceId),
+                    PorterDuff.Mode.SRC_ATOP);
+
+            image.setColorFilter(porterDuffColorFilter);
+        }
     }
 
 }

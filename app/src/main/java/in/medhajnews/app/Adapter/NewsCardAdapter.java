@@ -3,7 +3,9 @@ package in.medhajnews.app.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,6 +20,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import in.medhajnews.app.ArticleActivity;
+import in.medhajnews.app.NewsActivity;
 import in.medhajnews.app.Objects.Article;
 import in.medhajnews.app.R;
 
@@ -45,10 +48,23 @@ public class NewsCardAdapter extends RecyclerView.Adapter<NewsCardAdapter.NewsCa
         return new NewsCardsHolder(myItem);
     }
 
+//    public void updateItems(boolean animated) {
+//        mArticleList.clear();
+//        for(int i = 0; i< 25; i++) {
+//            mArticleList.add(Article.sampleArticle(mContext));
+//        }
+//        if (animated) {
+//            notifyItemRangeInserted(0 , mArticleList.size());
+//        } else {
+//            notifyDataSetChanged();
+//        }
+//        MainFragment.DummyArticleList.addAll(mArticleList);
+//    }
+
     @Override
     public void onBindViewHolder(final NewsCardsHolder holder, int position) {
         final Article currentArticle = mArticleList.get(position);
-        holder.cardCategory.setText(currentArticle.Category);
+//        holder.cardCategory.setText(currentArticle.Category);
         holder.cardTitle.setText(currentArticle.ArticleTitle);
 
         Glide.with(mContext).load(Uri.parse(currentArticle.ArticleImageLink))
@@ -66,12 +82,16 @@ public class NewsCardAdapter extends RecyclerView.Adapter<NewsCardAdapter.NewsCa
         holder.cardSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Boolean.parseBoolean(currentArticle.isArticleSaved)) {
-                    currentArticle.saveArticle(currentArticle);
-                    holder.cardSaveButton.setImageResource(R.drawable.ic_saved_offline);
+                if(NewsActivity.mFloatingActionMenu.isOpened()) {
+                    NewsActivity.mFloatingActionMenu.close(true);
                 } else {
-                    currentArticle.unsaveArticle(currentArticle);
-                    holder.cardSaveButton.setImageResource(R.drawable.ic_save_offline);
+                    if (Boolean.parseBoolean(currentArticle.isArticleSaved)) {
+                        currentArticle.saveArticle(currentArticle);
+                        holder.cardSaveButton.setImageResource(R.drawable.ic_saved_offline);
+                    } else {
+                        currentArticle.unsaveArticle(currentArticle);
+                        holder.cardSaveButton.setImageResource(R.drawable.ic_save_offline);
+                    }
                 }
             }
         });
@@ -80,9 +100,13 @@ public class NewsCardAdapter extends RecyclerView.Adapter<NewsCardAdapter.NewsCa
         holder.newsCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent article = new Intent(mContext, ArticleActivity.class);
-                article.putExtra("Article", currentArticle);
-                ((Activity) mContext).startActivity(article);
+                if(NewsActivity.mFloatingActionMenu.isOpened()) {
+                    NewsActivity.mFloatingActionMenu.close(true);
+                } else {
+                    Intent article = new Intent(mContext, ArticleActivity.class);
+                    article.putExtra("Article", currentArticle);
+                    ((Activity) mContext).startActivity(article);
+                }
             }
         });
 
@@ -90,13 +114,20 @@ public class NewsCardAdapter extends RecyclerView.Adapter<NewsCardAdapter.NewsCa
         holder.cardShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent share = new Intent(Intent.ACTION_SEND);
-                share.setType("text/plain");
-                String shareBody = currentArticle.ArticleTitle + "\n" + currentArticle.ArticleLink;
-                String shareSubject = "Shared via Meddhaj News App";
-                share.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
-                share.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                ((Activity) mContext).startActivity(Intent.createChooser(share, "Share via"));
+                if (NewsActivity.mFloatingActionMenu.isOpened()) {
+                    NewsActivity.mFloatingActionMenu.close(true);
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ((AnimatedVectorDrawable) holder.cardShareButton.getDrawable()).start();
+                    }
+                    Intent share = new Intent(Intent.ACTION_SEND);
+                    share.setType("text/plain");
+                    String shareBody = currentArticle.ArticleTitle + "\n" + currentArticle.ArticleLink;
+                    String shareSubject = "Shared via Meddhaj News App";
+                    share.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
+                    share.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    ((Activity) mContext).startActivity(Intent.createChooser(share, "Share via"));
+                }
             }
         });
 
@@ -116,7 +147,7 @@ public class NewsCardAdapter extends RecyclerView.Adapter<NewsCardAdapter.NewsCa
 
         public ImageView cardImage;
         public TextView cardTitle;
-        public TextView cardCategory;
+//        public TextView cardCategory;
         public ImageView cardSaveButton;
         public ImageView cardShareButton;
         public CardView newsCard;
@@ -124,11 +155,14 @@ public class NewsCardAdapter extends RecyclerView.Adapter<NewsCardAdapter.NewsCa
         public NewsCardsHolder(View itemView) {
             super(itemView);
             cardImage = (ImageView) itemView.findViewById(R.id.card_image);
-            cardTitle = (TextView) itemView.findViewById(R.id.card_title);
-            cardCategory = (TextView) itemView.findViewById(R.id.card_category);
-            cardSaveButton = (ImageView) itemView.findViewById(R.id.card_save);
+            cardTitle = (TextView) itemView.findViewById(R.id.title);
+//            cardCategory = (TextView) itemView.findViewById(R.id.card_category);
+            cardSaveButton = (ImageView) itemView.findViewById(R.id.save);
             newsCard = (CardView) itemView.findViewById(R.id.news_card);
-            cardShareButton = (ImageView) itemView.findViewById(R.id.card_share);
+            cardShareButton = (ImageView) itemView.findViewById(R.id.share);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
+                cardShareButton.setImageResource(R.drawable.avd_share);
+            }
 
         }
     }

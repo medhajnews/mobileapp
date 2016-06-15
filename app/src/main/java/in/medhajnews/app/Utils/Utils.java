@@ -10,6 +10,11 @@ import in.medhajnews.app.R;
  * Use this class for all misc static methods
  */
 public class Utils {
+    /**
+     * calculates Toolbar height for animating toolbar
+     * @param context (Context) from calling Activity
+     * @return (int) height of toolbar
+     */
     public static int getToolbarHeight(Context context) {
         final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
                 new int[]{R.attr.actionBarSize});
@@ -18,4 +23,5 @@ public class Utils {
 
         return toolbarHeight;
     }
+
 }

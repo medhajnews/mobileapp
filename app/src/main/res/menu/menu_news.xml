@@ -2,10 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="in.medhajnews.app.NewsActivity">
-    <item
-        android:id="@+id/action_search"
-        android:orderInCategory="2"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_search_dark"
-        android:title="@string/search" />
+    <!--<item-->
+        <!--android:id="@+id/action_search"-->
+        <!--android:orderInCategory="2"-->
+        <!--app:showAsAction="ifRoom"-->
+        <!--android:icon="@drawable/ic_search_dark"-->
+        <!--android:title="@string/search" />-->
+    <!--help and feedback-->
+    <!--settings-->
 </menu>

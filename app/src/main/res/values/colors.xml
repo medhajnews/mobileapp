@@ -20,5 +20,7 @@
     <color name="dark_icon">#99000000</color> <!-- 60% black-->
     <color name="inline_action_icon">#ff757575</color> <!-- grey 600 -->
     <color name="mid_grey">#40808080</color>
-    <color name="dark_overlay">#66000000</color>
+    <color name="dark_overlay">#88000000</color>
+    <color name="fab_dark">#212121</color>
+    <color name="control_background">#cc4285f4</color>
 </resources>

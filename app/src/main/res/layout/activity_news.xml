@@ -5,18 +5,15 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:background="@color/newsCardActivityBackground"
-    android:fitsSystemWindows="true">
-
-
+    android:fitsSystemWindows="true"
+    tools:context="in.medhajnews.app.NewsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:layout_gravity="top|center">
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -24,7 +21,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:theme="@style/ToolbarTheme"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <RelativeLayout
@@ -38,6 +34,16 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:contentDescription="@null" />
+
+                <ImageView
+                    android:id="@+id/search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_search_dark"
+                    android:layout_alignParentEnd="true"
+                    android:contentDescription="@null"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_margin="8dp"/>
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
@@ -47,6 +53,7 @@
             android:layout_height="wrap_content"
             app:tabGravity="fill"
             app:tabIndicatorColor="@color/article_title"
+            app:tabIndicatorHeight="1dp"
             app:tabMode="scrollable"
             app:tabSelectedTextColor="@color/article_title"
             app:tabTextColor="@color/article_info" />
@@ -57,101 +64,52 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/appbar"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:elevation="24dp"
-        android:id="@+id/overlay"/>
+    <!--<android.support.design.widget.FloatingActionButton-->
+    <!--android:id="@+id/news_fab"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="end|bottom"-->
+    <!--android:layout_margin="@dimen/fab_margin"-->
+    <!--android:src="@drawable/ic_settings_fab"-->
+    <!--app:backgroundTint="#212121"-->
+    <!--app:layout_behavior="in.medhajnews.app.Widgets.Behavior.FabScrollBehavior" />-->
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end|bottom"
-            android:animateLayoutChanges="true"
-            android:orientation="vertical">
-
-
-    <android.support.design.widget.FloatingActionButton
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fam"
         android:layout_width="wrap_content"
-        android:id="@+id/news_fab"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_settings_fab"
-        app:backgroundTint="#212121"
-        android:layout_margin="16dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_behavior="in.medhajnews.app.Widgets.Behavior.FabMenuScrollBehavior"
+        app:menu_colorNormal="#212121"
+        app:menu_colorPressed="#212121">
 
-            <android.support.design.widget.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/view"
-                app:fabSize="mini"
-                android:visibility="gone"
-                android:padding="4dp"
-                app:backgroundTint="#252525"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="24dp"
-                android:src="@drawable/ic_settings"
-                android:layout_marginEnd="24dp"
-                android:layout_above="@+id/news_fab"
-                android:layout_alignParentEnd="true" />
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="Share Your Story"
+            android:id="@+id/fab_share_story"
+            android:src="@drawable/ic_share_your_story" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/view2"
-                app:fabSize="mini"
-                android:visibility="gone"
-                android:src="@drawable/ic_share_your_story"
-                app:backgroundTint="#252525"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_above="@+id/view"
-                android:layout_alignParentEnd="true" />
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="Saved Articles"
+            android:id="@+id/fab_saved"
+            app:menu_colorNormal="#212121"
+            app:menu_colorPressed="#212121"
+            android:src="@drawable/ic_saved_articles_fab"/>
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/view7"
-                android:visibility="gone"
-                android:layout_marginTop="12dp"
-                android:layout_alignTop="@+id/view2"
-                android:layout_toStartOf="@+id/view2">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  Share Your Story  "/>
-            </android.support.v7.widget.CardView>
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/view8"
-                android:visibility="gone"
-                android:layout_marginTop="12dp"
-                android:layout_alignTop="@+id/view"
-                android:layout_toStartOf="@+id/view">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  Settings  "/>
-            </android.support.v7.widget.CardView>
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/view9"
-                android:visibility="gone"
-                android:layout_marginTop="20dp"
-                android:layout_alignTop="@+id/news_fab"
-                android:layout_toStartOf="@+id/news_fab">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  Saved Articles  "/>
-            </android.support.v7.widget.CardView>
-        </RelativeLayout>
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_label="Settings"
+            android:id="@+id/fab_settings"
+            app:menu_colorNormal="#212121"
+            app:menu_colorPressed="#212121"
+            android:src="@drawable/ic_settings"/>
+    </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>
