@@ -140,4 +140,7 @@ Current Club: Liverpool</string>
     <string name="picture">Picture</string>
     <string name="description_info">Info</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="share_intro">With everything that\'s happening in todays world we often feel like getting our voice heard. But we struggle to find the right platform to do so.\n\nIn this section, you can finally what you think. what you believe in</string>
+    <string name="get_started">Get Started</string>
+    <string name="stories">Stories</string>
 </resources>

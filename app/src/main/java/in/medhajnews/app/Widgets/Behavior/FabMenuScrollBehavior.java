@@ -42,6 +42,9 @@ public class FabMenuScrollBehavior extends CoordinatorLayout.Behavior<FloatingAc
     }
 
     private void animateOut(final FloatingActionMenu button) {
+        if(button.isOpened()) {
+            button.close(false);
+        }
         Animation anim = AnimationUtils.loadAnimation(button.getContext(),
                 R.anim.fab_slide_down);
         anim.setInterpolator(INTERPOLATOR);

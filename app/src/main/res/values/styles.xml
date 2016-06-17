@@ -52,8 +52,6 @@
         <item name="colorControlActivated">#FFF</item>
         <item name="android:textColorPrimary">#FFF</item>
         <item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
-        <item name="selectableItemBackground">@drawable/mid_grey_ripple</item>
-        <item name="selectableItemBackgroundBorderless">@drawable/mid_grey_ripple</item>
         <item name="colorControlHighlight">@color/mid_grey</item>
     </style>
 

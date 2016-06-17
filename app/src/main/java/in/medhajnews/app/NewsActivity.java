@@ -35,7 +35,7 @@ public class NewsActivity extends AppCompatActivity {
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     *
+     * <p/>
      * {@link FragmentPagerAdapter} (which will keep every
      * loaded fragment in memory)  becomes too memory intensive.
      */
@@ -65,7 +65,7 @@ public class NewsActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if(savedInstanceState==null) {
+        if (savedInstanceState == null) {
             startIntroAnimation();
         }
     }
@@ -92,6 +92,8 @@ public class NewsActivity extends AppCompatActivity {
         mSettingsFab.setColorPressed(ContextCompat.getColor(this, R.color.fab_dark));
         mSavedFab.setColorNormal(ContextCompat.getColor(this, R.color.fab_dark));
         mSavedFab.setColorPressed(ContextCompat.getColor(this, R.color.fab_dark));
+        mShareStoryFab.setColorNormal(ContextCompat.getColor(this, R.color.fab_light));
+        mShareStoryFab.setColorPressed(ContextCompat.getColor(this, R.color.fab_light));
 
         mSearchItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +115,7 @@ public class NewsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mFloatingActionMenu.close(true);
-                Intent settings  = new Intent(NewsActivity.this, SettingsActivity.class);
+                Intent settings = new Intent(NewsActivity.this, SettingsActivity.class);
                 startActivity(settings);
             }
         });
@@ -124,7 +126,7 @@ public class NewsActivity extends AppCompatActivity {
                 //todo : add share your story activity
 //                showToast("Share your Story", false);
                 mFloatingActionMenu.close(true);
-                Intent camera = new Intent(NewsActivity.this, CameraActivity.class);
+                Intent camera = new Intent(NewsActivity.this, ShareActivity.class);
                 startActivity(camera);
             }
         });
@@ -167,7 +169,6 @@ public class NewsActivity extends AppCompatActivity {
         mToolbarImage = (ImageView) findViewById(R.id.app_logo);
 
 
-
         if (mToolbarImage != null) {
             Glide.with(this).load(R.drawable.newslogo).into(mToolbarImage);
         }
@@ -191,11 +192,15 @@ public class NewsActivity extends AppCompatActivity {
                 public void onTabSelected(TabLayout.Tab tab) {
                     mViewPager.setCurrentItem(tab.getPosition());
                     mAppBarLayout.setExpanded(true, true);
+
                 }
 
                 @Override
                 public void onTabUnselected(TabLayout.Tab tab) {
-
+                    if(mFloatingActionMenu.isOpened()) {
+                        mFloatingActionMenu.close(true);
+                        onTabSelected(tab);
+                    }
                 }
 
                 @Override
@@ -237,7 +242,7 @@ public class NewsActivity extends AppCompatActivity {
 //        return super.onOptionsItemSelected(item);
 //    }
 
-    private void startIntroAnimation(){
+    private void startIntroAnimation() {
         mFloatingActionMenu.setTranslationY(2 * getResources().getDimensionPixelOffset(R.dimen.fab_size_normal));
 
         mAppBarLayout.setTranslationY(-100);
@@ -265,7 +270,7 @@ public class NewsActivity extends AppCompatActivity {
                 .start();
     }
 
-    private void startContentAnimation(){
+    private void startContentAnimation() {
         mFloatingActionMenu.animate()
                 .translationY(0)
                 .setInterpolator(new OvershootInterpolator(1.f))
@@ -278,7 +283,7 @@ public class NewsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(mFloatingActionMenu.isOpened()) {
+        if (mFloatingActionMenu.isOpened()) {
             mFloatingActionMenu.close(true);
         } else {
             super.onBackPressed();
@@ -287,20 +292,16 @@ public class NewsActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        //don't rely on this to close menu, it doesn't look pretty
-        //close floating action menu before leaving activity
-        if(mFloatingActionMenu.isOpened()) {
-            mFloatingActionMenu.close(true);
-        }
         super.onPause();
     }
 
     /**
      * Dismisses the stale toast before making a fresh one
-     * @param text (String) toast text
+     *
+     * @param text         (String) toast text
      * @param longDuration (boolean) toast duration
      */
-    public void showToast( String text, boolean longDuration) {
+    public void showToast(String text, boolean longDuration) {
         if (mToast != null) mToast.cancel();
         mToast = Toast.makeText(NewsActivity.this, text,
                 longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);

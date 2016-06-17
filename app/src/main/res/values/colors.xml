@@ -23,4 +23,10 @@
     <color name="dark_overlay">#88000000</color>
     <color name="fab_dark">#212121</color>
     <color name="control_background">#cc4285f4</color>
+    <color name="fab_light">#FF3C53</color>
+    <color name="darkIcon">#535353</color>
+    <color name="shareBackground">#0A0A0A</color>
+    <color name="shareCard">#141414</color>
+    <color name="shareCardText">#BCBCBC</color>
+    <color name="shareStories">#E0E0E0</color>
 </resources>

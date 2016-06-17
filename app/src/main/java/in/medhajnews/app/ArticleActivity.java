@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -26,8 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,9 +35,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
@@ -53,13 +47,11 @@ public class ArticleActivity extends AppCompatActivity {
 
     private CardView mBottomBar;
     private ImageView mFontSizeIcon, mUISwitchIcon, mBookmarkIcon, mShareIcon;
-    private boolean isUIdark = false;
-    private boolean isUIfull = false;
+    private boolean isUiDark = false;
     private boolean isArticleSaved = false;
     private LinearLayout mContentHolder;
-    private ColorStateList oldtextColors;
+    private ColorStateList OldTextColor;
 
-    private ImageView mArticleImageView;
     private Toast mToast;
     private SharedPreferences prefs;
     private ImageButton mBackArrow, mSearchIcon;
@@ -67,14 +59,19 @@ public class ArticleActivity extends AppCompatActivity {
      * Preferences                  DefaultValue
      * //font_size                      16
      * //is_ui_state_dark              false
+     *
+     * //todo : add ranking counter as described in {@link in.medhajnews.app.Data.ArticleDBHelper}
      */
 
     //todo : show hints on first run
 
     private final static String TAG = ArticleActivity.class.getSimpleName();
 
-    private TextView mTitleTextView, mContentTextView, mAuthorTextView, mDateTextView,
-            mAreaTextView, mUpdateTextView;
+    private TextView mContentTextView;
+    private TextView mAuthorTextView;
+    private TextView mDateTextView;
+    private TextView mAreaTextView;
+    private TextView mUpdateTextView;
 
     private Article mArticle;
 
@@ -84,7 +81,7 @@ public class ArticleActivity extends AppCompatActivity {
         super.onStop();
         Log.d(TAG, "onStop called");
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("is_ui_state_dark", isUIdark);
+        editor.putBoolean("is_ui_state_dark", isUiDark);
         editor.apply();
     }
 
@@ -97,7 +94,7 @@ public class ArticleActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
 
-        if(getIntent()!=null) {
+        if (getIntent() != null) {
             mArticle = getIntent().getParcelableExtra("Article");
         } else {
             finish();
@@ -132,11 +129,11 @@ public class ArticleActivity extends AppCompatActivity {
          * Share dialog takes a little time to load, On Android 5+ we'll animate the share icon to
          * hide the delay. Unfortunately no feasible method of animations exist for lower API's
          */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mShareIcon !=null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mShareIcon != null) {
             mShareIcon.setImageResource(R.drawable.avd_share);
         }
 
-        if(Boolean.parseBoolean(mArticle.isArticleSaved)) {
+        if (Boolean.parseBoolean(mArticle.isArticleSaved)) {
             mBookmarkIcon.setImageResource(R.drawable.ic_saved_offline);
         }
 
@@ -166,14 +163,14 @@ public class ArticleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //todo (LP): check if share compilation is faster in production builds
                 //animate icon if API > 21
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mShareIcon !=null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mShareIcon != null) {
                     ((AnimatedVectorDrawable) mShareIcon.getDrawable()).start();
                 }
                 //start share
                 Intent share = new Intent(Intent.ACTION_SEND);
                 share.setType("text/plain");
-                String shareBody = mArticle.ArticleTitle + " " + mArticle.ArticleLink;// replace with article link
-                String shareSubject = "Shared via Meddhaj News App"; //share subject
+                String shareBody = mArticle.ArticleTitle + " " + mArticle.ArticleLink;
+                String shareSubject = "Shared via Medhaj News App"; //share subject
                 share.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
                 share.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(share, "Share via"));
@@ -184,9 +181,9 @@ public class ArticleActivity extends AppCompatActivity {
 //        Typeface lato = Typeface.createFromAsset(getAssets(), "Lato-Light.ttf");
 
         mContentHolder = (LinearLayout) findViewById(R.id.content_holder);
-        mArticleImageView = (ImageView) findViewById(R.id.main_image);
+        ImageView mArticleImageView = (ImageView) findViewById(R.id.main_image);
         mContentTextView = (TextView) findViewById(R.id.main_content);
-        mTitleTextView = (TextView) findViewById(R.id.content_title);
+        TextView mTitleTextView = (TextView) findViewById(R.id.content_title);
         mAuthorTextView = (TextView) findViewById(R.id.content_author);
         mAreaTextView = (TextView) findViewById(R.id.content_area);
         mUpdateTextView = (TextView) findViewById(R.id.content_update_time);
@@ -209,16 +206,10 @@ public class ArticleActivity extends AppCompatActivity {
         mDateTextView.setText(mArticle.ArticleDate);
         mUpdateTextView.setText(mArticle.ArticleUpdateTime);
         /*
-            initialise oldtextcolors before calling nightmodetoggle
+            initialise OldTextColor before calling nightmodetoggle
          */
-        oldtextColors = mAuthorTextView.getTextColors();
-        ObservableScrollView scrollView = (ObservableScrollView) findViewById(R.id.main_scrollView);
-        mContentTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleUIElements();
-            }
-        });
+        OldTextColor = mAuthorTextView.getTextColors();
+//        NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.main_scrollView);
         mContentTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -227,29 +218,7 @@ public class ArticleActivity extends AppCompatActivity {
                 return true;
             }
         });
-        //todo : replace observable scrollview with observable recyclerview
-        if(scrollView!=null) {
-            scrollView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-                @Override
-                public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-                }
-
-                @Override
-                public void onDownMotionEvent() {
-                }
-
-                @Override
-                public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                    //UP is down and DOWN is up
-                    if (scrollState == ScrollState.UP) {
-                        toggleUIElements();
-                    } else {
-                        toggleUIElements();
-                    }
-                }
-
-            });
-        }
+        //todo : replace scrollview with recyclerview
 
         Glide.with(this).load(mArticle.ArticleImageLink).listener(mainImageLoadListener)
                 .fitCenter().crossFade().into(mArticleImageView);
@@ -263,23 +232,11 @@ public class ArticleActivity extends AppCompatActivity {
         }
     }
 
-    private void toggleUIElements() {
-        //todo : fix animation
-        if (isUIfull) {
-            isUIfull = false;
-            mBottomBar.setVisibility(View.VISIBLE);
-//            bottomBarAnimateIn();
-        } else {
-            isUIfull = true;
-            mBottomBar.setVisibility(View.GONE);
-//            bottomBarAnimateOut();
-        }
-    }
-
+    //Bottombar
     private void toggleNightMode(Context context) {
-        if (!isUIdark) {
+        if (!isUiDark) {
             //make it dark
-            isUIdark = true;
+            isUiDark = true;
             mContentTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mContentTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             mAuthorTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
@@ -291,28 +248,28 @@ public class ArticleActivity extends AppCompatActivity {
             mDateTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mDateTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             mContentHolder.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
-            //Bottombar
+
             mBottomBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bottomBarDark));
-            switchBottombarIcons(true, context);
+            switchBottomBarIcons(true, context);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.statusBarDark));
             }
         } else {
             //make it light
-            isUIdark = false;
+            isUiDark = false;
             mContentTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mContentTextView.setTextColor(ContextCompat.getColor(context, R.color.article_content));
             mAuthorTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            mAuthorTextView.setTextColor(oldtextColors);
+            mAuthorTextView.setTextColor(OldTextColor);
             mAreaTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            mAreaTextView.setTextColor(oldtextColors);
+            mAreaTextView.setTextColor(OldTextColor);
             mUpdateTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            mUpdateTextView.setTextColor(oldtextColors);
+            mUpdateTextView.setTextColor(OldTextColor);
             mDateTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            mDateTextView.setTextColor(oldtextColors);
+            mDateTextView.setTextColor(OldTextColor);
             mContentHolder.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            switchBottombarIcons(false, context);
-            //bottombar
+
+            switchBottomBarIcons(false, context);
             mBottomBar.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
@@ -332,7 +289,7 @@ public class ArticleActivity extends AppCompatActivity {
             isArticleSaved = false; //let a method handle this variable and edit the database
             mBookmarkIcon.setImageResource(R.drawable.ic_save_offline);
         }
-        if(isUIdark) {
+        if (isUiDark) {
             ColorUtils.applyThemeToDrawable(this, mBookmarkIcon.getDrawable(), R.color.lightIcon);
         }
     }
@@ -346,7 +303,7 @@ public class ArticleActivity extends AppCompatActivity {
 
         final DiscreteSeekBar seekBar = (DiscreteSeekBar) layout.findViewById(R.id.font_seekbar);
         ImageView imageView = (ImageView) layout.findViewById(R.id.fontsizesmall);
-        if(isUIdark) {
+        if (isUiDark) {
             ColorUtils.applyThemeToDrawable(this, imageView.getDrawable(), R.color.lightIcon);
             layout.findViewById(R.id.base).setBackgroundColor(
                     ContextCompat.getColor(this, R.color.fontDialogDark)
@@ -403,24 +360,18 @@ public class ArticleActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void switchBottombarIcons(boolean makelight, Context context) {
-        if(makelight) {
-            ColorUtils.applyThemeToDrawable(context, mFontSizeIcon.getDrawable(), R.color.lightIcon);
-            ColorUtils.applyThemeToDrawable(context, mUISwitchIcon.getDrawable(), R.color.lightIcon);
-            ColorUtils.applyThemeToDrawable(context, mBookmarkIcon.getDrawable(), R.color.lightIcon);
-            ColorUtils.applyThemeToDrawable(context, mShareIcon.getDrawable(), R.color.lightIcon);
+    public void switchBottomBarIcons(boolean makelight, Context context) {
+        int color;
+        if (makelight) {
+            color = R.color.lightIcon;
         } else {
-            mFontSizeIcon.setImageResource(R.drawable.ic_text_size);
-            mUISwitchIcon.setImageResource(R.drawable.ic_night_mode_toggle);
-            if(!isArticleSaved) {
-                mBookmarkIcon.setImageResource(R.drawable.ic_save_offline);
-            } else {
-                mBookmarkIcon.setImageResource(R.drawable.ic_saved_offline);
-            }
-            mShareIcon.setImageResource(R.drawable.ic_share);
+            color = R.color.darkIcon;
         }
+        ColorUtils.applyThemeToDrawable(context, mFontSizeIcon.getDrawable(), color);
+        ColorUtils.applyThemeToDrawable(context, mUISwitchIcon.getDrawable(), color);
+        ColorUtils.applyThemeToDrawable(context, mBookmarkIcon.getDrawable(), color);
+        ColorUtils.applyThemeToDrawable(context, mShareIcon.getDrawable(), color);
     }
-
 
 
     private RequestListener mainImageLoadListener = new RequestListener<String, GlideDrawable>() {
@@ -468,60 +419,13 @@ public class ArticleActivity extends AppCompatActivity {
         }
     };
 
-    private void bottomBarAnimateIn() {
-        Animation slideUpAnimation = AnimationUtils.loadAnimation(ArticleActivity.this,
-                R.anim.fab_slide_up);
-        slideUpAnimation.setInterpolator(new FastOutSlowInInterpolator());
-        slideUpAnimation.setDuration(200L);
-        slideUpAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                mBottomBar.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        mBottomBar.startAnimation(slideUpAnimation);
-    }
-
-    private void bottomBarAnimateOut() {
-        Animation slideDownAnimation = AnimationUtils.loadAnimation(ArticleActivity.this,
-                R.anim.fab_slide_down);
-        slideDownAnimation.setDuration(200L);
-        slideDownAnimation.setInterpolator(new FastOutSlowInInterpolator());
-        slideDownAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mBottomBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        mBottomBar.startAnimation(slideDownAnimation);
-    }
-
     /**
      * Dismisses the stale toast before making a fresh one
-     * @param text (String) toast text
+     *
+     * @param text         (String) toast text
      * @param longDuration (boolean) toast duration
      */
-    public void showToast( String text, boolean longDuration) {
+    public void showToast(String text, boolean longDuration) {
         if (mToast != null) mToast.cancel();
         mToast = Toast.makeText(ArticleActivity.this, text,
                 longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
