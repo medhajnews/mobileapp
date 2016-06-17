@@ -11,6 +11,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -75,6 +76,8 @@ public class ArticleActivity extends AppCompatActivity {
 
     private Article mArticle;
 
+    private CoordinatorLayout baseLayout;
+
 
     @Override
     protected void onStop() {
@@ -104,6 +107,7 @@ public class ArticleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_article);
         mBackArrow = (ImageButton) findViewById(R.id.back_arrow);
         mSearchIcon = (ImageButton) findViewById(R.id.search_icon);
+        baseLayout = (CoordinatorLayout) findViewById(R.id.article_base);
         mSearchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -299,6 +303,7 @@ public class ArticleActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         final View layout = layoutInflater.inflate(R.layout.font_picker_dialog,
                 (ViewGroup) findViewById(R.id.base));
+        fontSelectionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         fontSelectionDialog.setContentView(layout);
 
         final DiscreteSeekBar seekBar = (DiscreteSeekBar) layout.findViewById(R.id.font_seekbar);

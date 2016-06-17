@@ -19,17 +19,20 @@ package in.medhajnews.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import in.medhajnews.app.Camera.CameraPreview;
@@ -38,6 +41,7 @@ import in.medhajnews.app.Data.ImageHandler;
 public class CameraActivity extends Activity {
 
     private static final String TAG = CameraActivity.class.getSimpleName();
+    private static  final int FOCUS_AREA_SIZE= 300;
 
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -71,15 +75,19 @@ public class CameraActivity extends Activity {
         mCameraparams = mCamera.getParameters();
 
         List<String> focusModes = mCameraparams.getSupportedFocusModes();
-        if(focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            //auto focus is supported
-            mCameraparams.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        if(focusModes!=null) {
+            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                //auto focus is supported
+                mCameraparams.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            }
         }
 
         List<String> flashModes = mCameraparams.getSupportedFlashModes();
-        if(flashModes.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
-            //auto flash supported
-            mCameraparams.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+        if(flashModes!=null) {
+            if (flashModes.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
+                //auto flash supported
+                mCameraparams.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+            }
         }
 
         //set parameter on camera
@@ -93,11 +101,46 @@ public class CameraActivity extends Activity {
         preview.addView(mPreview);
 
         //setup listeners for capture
-        preview.setOnClickListener(new View.OnClickListener() {
+        preview.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                mCamera.takePicture(null, null, CameraPreview.mPicture);
-                //todo restart preview
+            public boolean onTouch(View view, MotionEvent event) {
+                if (mCamera != null) {
+                    mCamera.cancelAutoFocus();
+                    Rect focusRect = calculateFocusArea(event.getX(), event.getY());
+
+                    Camera.Parameters parameters = mCamera.getParameters();
+                    if (parameters.getFocusMode().equals(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                    }
+                    if (parameters.getMaxNumFocusAreas() > 0) {
+                        List<Camera.Area> mylist = new ArrayList<Camera.Area>();
+                        mylist.add(new Camera.Area(focusRect, 1000));
+                        parameters.setFocusAreas(mylist);
+                    }
+
+                    try {
+                        mCamera.cancelAutoFocus();
+                        mCamera.setParameters(parameters);
+                        mCamera.startPreview();
+                        mCamera.autoFocus(new Camera.AutoFocusCallback() {
+                            @Override
+                            public void onAutoFocus(boolean success, Camera camera) {
+                                if (camera.getParameters().getFocusMode().equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                                    Camera.Parameters parameters = camera.getParameters();
+                                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                                    if (parameters.getMaxNumFocusAreas() > 0) {
+                                        parameters.setFocusAreas(null);
+                                    }
+                                    camera.setParameters(parameters);
+                                    camera.startPreview();
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return true;
             }
         });
 
@@ -188,7 +231,7 @@ public class CameraActivity extends Activity {
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         //todo set audio/video size, bitrate and encoding
 
-        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_CIF));
 
         File outputfile = ImageHandler.getOutputMediaFile(ImageHandler.MEDIA_TYPE_VIDEO);
 
@@ -199,6 +242,8 @@ public class CameraActivity extends Activity {
         }
 
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
+        mMediaRecorder.setMaxDuration(45000); //max time limit 45 seconds
+
 
         try {
             mMediaRecorder.prepare();
@@ -212,5 +257,26 @@ public class CameraActivity extends Activity {
             return false;
         }
         return true;
+    }
+
+    private Rect calculateFocusArea(float x, float y) {
+        int left = clamp(Float.valueOf((x / mPreview.getWidth()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+        int top = clamp(Float.valueOf((y / mPreview.getHeight()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+
+        return new Rect(left, top, left + FOCUS_AREA_SIZE, top + FOCUS_AREA_SIZE);
+    }
+
+    private int clamp(int touchCoordinateInCameraReper, int focusAreaSize) {
+        int result;
+        if (Math.abs(touchCoordinateInCameraReper)+focusAreaSize/2>1000){
+            if (touchCoordinateInCameraReper>0){
+                result = 1000 - focusAreaSize/2;
+            } else {
+                result = -1000 + focusAreaSize/2;
+            }
+        } else{
+            result = touchCoordinateInCameraReper - focusAreaSize/2;
+        }
+        return result;
     }
 }

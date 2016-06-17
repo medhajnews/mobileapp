@@ -30,6 +30,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         //type will be auto detected. probably.
     }
 
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
@@ -85,6 +86,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             } catch (IOException e) {
                 Log.e(TAG, e.getLocalizedMessage());
             }
+
+            camera.startPreview();
 
         }
     };

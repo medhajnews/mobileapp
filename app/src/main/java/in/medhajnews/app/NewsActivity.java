@@ -129,9 +129,8 @@ public class NewsActivity extends AppCompatActivity {
 //                showToast("Share your Story", false);
                 mFloatingActionMenu.close(true);
                 Intent camera = new Intent(NewsActivity.this, ShareActivity.class);
-                if(!mFloatingActionMenu.isOpened()) {
+//                if(!mFloatingActionMenu.isOpened()) {
                     startActivity(camera);
-                }
             }
         });
 
@@ -191,11 +190,10 @@ public class NewsActivity extends AppCompatActivity {
         if (mTabLayout != null) {
             mTabLayout.setupWithViewPager(mViewPager);
 
-            mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
                 public void onTabSelected(TabLayout.Tab tab) {
                     mViewPager.setCurrentItem(tab.getPosition());
-                    mAppBarLayout.setExpanded(true, true);
 
                 }
 
@@ -215,43 +213,11 @@ public class NewsActivity extends AppCompatActivity {
         }
     }
 
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_news, menu);
-//
-//        mSearchItem = (MenuItem) menu.findItem(R.id.action_search);
-////        if(pendingAnimation) {
-////            pendingAnimation=false;
-////            startIntroAnimation();
-////        }
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_search) {
-//            Intent search = new Intent(NewsActivity.this, SearchActivity.class);
-//            startActivity(search);
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
     private void startIntroAnimation() {
         mFloatingActionMenu.setTranslationY(2 * getResources().getDimensionPixelOffset(R.dimen.fab_size_normal));
 
         mAppBarLayout.setTranslationY(-100);
         mToolbarImage.setTranslationY(-100);
-//        getInboxMenuItem().getActionView().setTranslationY(-actionbarSize);
 
         mAppBarLayout.animate()
                 .translationY(0)
@@ -261,10 +227,6 @@ public class NewsActivity extends AppCompatActivity {
                 .translationY(0)
                 .setDuration(ANIM_DURATION_TOOLBAR)
                 .setStartDelay(400)
-//        mSearchItem.getActionView().animate()
-//                .translationY(0)
-//                .setDuration(ANIM_DURATION_TOOLBAR)
-//                .setStartDelay(500)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {

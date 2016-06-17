@@ -143,4 +143,7 @@ Current Club: Liverpool</string>
     <string name="share_intro">With everything that\'s happening in todays world we often feel like getting our voice heard. But we struggle to find the right platform to do so.\n\nIn this section, you can finally what you think. what you believe in</string>
     <string name="get_started">Get Started</string>
     <string name="stories">Stories</string>
+    <string name="share">Share</string>
+    <string name="save">Save Offline</string>
+    <string name="color">Invert Colors</string>
 </resources>
