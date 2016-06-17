@@ -97,6 +97,7 @@ public class CameraActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mCamera.takePicture(null, null, CameraPreview.mPicture);
+                //todo restart preview
             }
         });
 

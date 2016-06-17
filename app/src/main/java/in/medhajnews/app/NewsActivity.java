@@ -116,7 +116,9 @@ public class NewsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mFloatingActionMenu.close(true);
                 Intent settings = new Intent(NewsActivity.this, SettingsActivity.class);
-                startActivity(settings);
+                if(!mFloatingActionMenu.isOpened()) {
+                    startActivity(settings);
+                }
             }
         });
 
@@ -127,7 +129,9 @@ public class NewsActivity extends AppCompatActivity {
 //                showToast("Share your Story", false);
                 mFloatingActionMenu.close(true);
                 Intent camera = new Intent(NewsActivity.this, ShareActivity.class);
-                startActivity(camera);
+                if(!mFloatingActionMenu.isOpened()) {
+                    startActivity(camera);
+                }
             }
         });
 
