@@ -5,11 +5,12 @@
     android:background="@color/white">
 
     <ImageView
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="196dp"
+        android:layout_height="196dp"
         android:id="@+id/app_icon"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@null" />
 
     <ImageView
         android:layout_width="100dp"
@@ -17,7 +18,8 @@
         android:id="@+id/app_logo"
         android:layout_marginBottom="16dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@null" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

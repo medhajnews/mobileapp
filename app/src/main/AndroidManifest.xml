@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -31,18 +33,13 @@
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+
+        </activity>
         <activity
             android:name=".ArticleActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".VideoActivity"
@@ -51,16 +48,8 @@
         <activity
             android:name=".GalleryActivity"
             android:label="@string/title_activity_gallery"
-            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionAndStatusBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.medhajnews.app.MainActivity" />
         </activity>
-        <activity
-            android:name=".BaseActivity"
-            android:label="@string/title_activity_base"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".NewsActivity"
             android:label="@string/title_activity_news"
@@ -85,11 +74,21 @@
         </activity>
         <activity
             android:name=".CameraActivity"
-            android:theme="@style/AppTheme.NoActionAndStatusBar"
-            android:screenOrientation="landscape" />
+            android:theme="@style/AppTheme.NoActionAndStatusBar" />
         <activity
             android:name=".ShareActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.ShareStory" />
+        <activity android:name=".SavedArticlesActivity" />
+
+        <service android:name=".services.NewsFetchService" />
+        <service android:name=".services.SaveService" />
+        <receiver android:name=".widget.NewsWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/news_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

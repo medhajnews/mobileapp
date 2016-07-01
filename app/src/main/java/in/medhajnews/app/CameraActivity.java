@@ -1,24 +1,6 @@
-/*
- * Copyright 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package in.medhajnews.app;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -27,21 +9,23 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.medhajnews.app.Camera.CameraPreview;
-import in.medhajnews.app.Data.ImageHandler;
+import in.medhajnews.app.camera.CameraCallbacks;
+import in.medhajnews.app.camera.CameraPreview;
+import in.medhajnews.app.data.ImageHandler;
 
 public class CameraActivity extends Activity {
 
     private static final String TAG = CameraActivity.class.getSimpleName();
-    private static  final int FOCUS_AREA_SIZE= 300;
+    private static final int FOCUS_AREA_SIZE = 300;
 
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -50,12 +34,19 @@ public class CameraActivity extends Activity {
     private boolean isAutoFocusSupported = false;
     private MediaRecorder mMediaRecorder;
     private boolean isRecording = false;
+    private boolean isCameraFacingFront = false;
+    private ImageView captureButton, modeButton;
+    private boolean isVideoMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_camera);
         setContentView(R.layout.activity_camera_old);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        captureButton = (ImageView) findViewById(R.id.button_capture);
+        modeButton = (ImageView) findViewById(R.id.button_mode);
+
         /**
          * Camera2 API implementations are buggy. Use the old camera API until support is completely
          * dropped.
@@ -65,39 +56,73 @@ public class CameraActivity extends Activity {
 //                    .replace(R.id.container, Camera2BasicFragment.newInstance())
 //                    .commit();
 //        }
-        if(!checkCameraHardware(this)) { //dont' run on devices without cameras
-            return;
+
+        modeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isVideoMode = !isVideoMode;
+            }
+        });
+
+        //todo WTF
+        if ((getPackageManager().hasSystemFeature(CAMERA_SERVICE))) { //dont' run on devices without cameras
+            Toast.makeText(CameraActivity.this, "Could not detect camera", Toast.LENGTH_SHORT).show();
+            finish();
         }
+
         //Detect and Access Camera
         mCamera = getCameraInstance();
-
+        if (mCamera == null) finish();
         //get feature list
         mCameraparams = mCamera.getParameters();
-
+        //Get Supported Flash and Focus Modes
         List<String> focusModes = mCameraparams.getSupportedFocusModes();
-        if(focusModes!=null) {
-            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-                //auto focus is supported
-                mCameraparams.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-            }
+        List<String> flashModes = mCameraparams.getSupportedFlashModes();
+        List<Camera.Size> pictureSizes = mCameraparams.getSupportedPictureSizes();
+
+        if (focusModes != null) {
+            isAutoFocusSupported = focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         }
 
-        List<String> flashModes = mCameraparams.getSupportedFlashModes();
-        if(flashModes!=null) {
+        if (isAutoFocusSupported) {
+            //auto focus is supported
+            mCameraparams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        }
+
+        if (flashModes != null) {
             if (flashModes.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
                 //auto flash supported
                 mCameraparams.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
             }
         }
 
+        Camera.Size bestSize = pictureSizes.get(0);
+        for(int i = 1; i < pictureSizes.size(); i++){
+            if((pictureSizes.get(i).width * pictureSizes.get(i).height) > (bestSize.width * bestSize.height)){
+                bestSize = pictureSizes.get(i);
+            }
+        }
+
+        mCameraparams.setJpegQuality(50);
+        mCameraparams.setPictureSize(bestSize.width, bestSize.height);
+
+        //OnCLickListeners
+        findViewById(R.id.textView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+
         //set parameter on camera
-        mCamera.setParameters(mCameraparams);
+        try {
+            mCamera.setParameters(mCameraparams);
+        } catch (RuntimeException err) {
+            Log.e(TAG, err.getMessage());
+        }
 
-        //instantiate a preview class
         mPreview = new CameraPreview(this, mCamera);
-
-        //Build a preview layout
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 
         //setup listeners for capture
@@ -122,20 +147,7 @@ public class CameraActivity extends Activity {
                         mCamera.cancelAutoFocus();
                         mCamera.setParameters(parameters);
                         mCamera.startPreview();
-                        mCamera.autoFocus(new Camera.AutoFocusCallback() {
-                            @Override
-                            public void onAutoFocus(boolean success, Camera camera) {
-                                if (camera.getParameters().getFocusMode().equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                                    Camera.Parameters parameters = camera.getParameters();
-                                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-                                    if (parameters.getMaxNumFocusAreas() > 0) {
-                                        parameters.setFocusAreas(null);
-                                    }
-                                    camera.setParameters(parameters);
-                                    camera.startPreview();
-                                }
-                            }
-                        });
+                        mCamera.autoFocus(CameraCallbacks.AutoFocusCallback);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -144,71 +156,90 @@ public class CameraActivity extends Activity {
             }
         });
 
-        final Button captureButton = (Button) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (isRecording) {
-                            // stop recording and release camera
-                            mMediaRecorder.stop();  // stop the recording
-                            releaseMediaRecorder(); // release the MediaRecorder object
-                            mCamera.lock();         // take camera access back from MediaRecorder
-
-                            // inform the user that recording has stopped
-                            captureButton.setText("Capture");
-                            isRecording = false;
-                        } else {
-                            // initialize video camera
-                            if (prepareVideoRecorder()) {
-                                // Camera is available and unlocked, MediaRecorder is prepared,
-                                // now you can start recording
-                                mMediaRecorder.start();
-
-                                // inform the user that recording has started
-                                captureButton.setText("Stop");
-                                isRecording = true;
+                        if(isVideoMode) {
+                            if (isRecording) {
+                                stopRecord();
                             } else {
-                                // prepare didn't work, release the camera
-                                releaseMediaRecorder();
-                                // inform user
+                                startRecord();
                             }
+                        } else {
+                            mCamera.takePicture(
+                                    CameraCallbacks.ShutterCallback,
+                                    null,
+                                    CameraCallbacks.PictureCallback);
                         }
                     }
                 }
         );
 
 
-
     }
 
     // remember to check for null return
     public static Camera getCameraInstance() {
-        Camera camera = null;
         try {
-            camera = Camera.open();
+            return Camera.open();
         } catch (Exception err) {
             Log.e(TAG, err.getLocalizedMessage());
+            return null;
         }
-        return camera;
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         releaseMediaRecorder();
         releaseCamera();
     }
 
     private void releaseCamera() {
-        if(mCamera!=null) {
+        if (mCamera != null) {
             mCamera.release();
             mCamera = null;
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if(isRecording) {
+            stopRecord();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void stopRecord() {
+        // stop recording and release camera
+        mMediaRecorder.stop();  // stop the recording
+        releaseMediaRecorder(); // release the MediaRecorder object
+        mCamera.lock();         // take camera access back from MediaRecorder
+
+        // inform the user that recording has stopped
+        isRecording = false;
+    }
+
+    private void startRecord() {
+        // initialize video camera
+        if (prepareVideoRecorder()) {
+            // Camera is available and unlocked, MediaRecorder is prepared,
+            // now you can start recording
+            mMediaRecorder.start();
+
+            // inform the user that recording has started
+            isRecording = true;
+        } else {
+            // prepare didn't work, release the camera
+            releaseMediaRecorder();
+            // inform user
+        }
+    }
+
     private void releaseMediaRecorder() {
-        if(mMediaRecorder!=null) {
+        if (mMediaRecorder != null) {
             mMediaRecorder.reset();
             mMediaRecorder.release();
             mMediaRecorder = null;
@@ -216,12 +247,12 @@ public class CameraActivity extends Activity {
         }
     }
 
-    private boolean checkCameraHardware(Context context) {
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
-    }
-
     private boolean prepareVideoRecorder() {
         mCamera = getCameraInstance();
+        if (mCamera == null) {
+            Log.e(TAG, "Camera instance turned out to be null!");
+            return false;
+        }
         mMediaRecorder = new MediaRecorder();
 
         mCamera.unlock();
@@ -229,16 +260,15 @@ public class CameraActivity extends Activity {
 
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-        //todo set audio/video size, bitrate and encoding
 
         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_CIF));
 
         File outputfile = ImageHandler.getOutputMediaFile(ImageHandler.MEDIA_TYPE_VIDEO);
 
-        if(outputfile!=null) {
+        if (outputfile != null) {
             mMediaRecorder.setOutputFile(outputfile.toString());
         } else {
-            Log.e(TAG, "No access to external media" );
+            Log.e(TAG, "No access to external media");
         }
 
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
@@ -268,15 +298,57 @@ public class CameraActivity extends Activity {
 
     private int clamp(int touchCoordinateInCameraReper, int focusAreaSize) {
         int result;
-        if (Math.abs(touchCoordinateInCameraReper)+focusAreaSize/2>1000){
-            if (touchCoordinateInCameraReper>0){
-                result = 1000 - focusAreaSize/2;
+        if (Math.abs(touchCoordinateInCameraReper) + focusAreaSize / 2 > 1000) {
+            if (touchCoordinateInCameraReper > 0) {
+                result = 1000 - focusAreaSize / 2;
             } else {
-                result = -1000 + focusAreaSize/2;
+                result = -1000 + focusAreaSize / 2;
             }
-        } else{
-            result = touchCoordinateInCameraReper - focusAreaSize/2;
+        } else {
+            result = touchCoordinateInCameraReper - focusAreaSize / 2;
         }
         return result;
     }
+
+
+    private int findFrontCameraId() {
+        int camId = 0;
+        for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                camId = i;
+                break;
+            }
+        }
+        return camId;
+    }
+
+    private int findBackCameraId() {
+        int camId = 0;
+        for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                camId = i;
+                break;
+            }
+        }
+        return camId;
+    }
+
+    private void switchCamera() {
+        if (mCamera != null) {
+            releaseCamera();
+        }
+        if (!isCameraFacingFront) {
+            mCamera = Camera.open(findBackCameraId());
+        } else {
+            mCamera = Camera.open(findFrontCameraId());
+        }
+    }
+
+
+
+
 }

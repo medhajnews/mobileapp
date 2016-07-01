@@ -22,6 +22,7 @@ android {
 repositories {
     mavenCentral()
     jcenter()
+    maven { url "https://jitpack.io" }
 }
 
 buildscript {
@@ -34,25 +35,28 @@ buildscript {
 }
 apply plugin: 'com.neenbedankt.android-apt'
 
+ext {
+    supportLibVersion = '24.0.0'
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     apt 'com.bluelinelabs:logansquare-compiler:1.3.6'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.android.support:support-v4:24.0.0'
-    compile 'com.android.support:support-v13:24.0.0'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:design:24.0.0'
-    compile 'com.github.ksoichiro:android-observablescrollview:1.5.0'
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:support-v13:${supportLibVersion}"
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
     compile 'org.adw.library:discrete-seekbar:1.0.1'
-    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.5.0'
-    compile 'com.android.support:cardview-v7:24.0.0'
-    compile 'com.android.support:recyclerview-v7:24.0.0'
-    compile 'com.bluelinelabs:logansquare:1.3.6'
-    compile 'com.android.support:palette-v7:24.0.0'
+    compile "com.android.support:cardview-v7:${supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile "com.android.support:palette-v7:${supportLibVersion}"
     compile 'com.github.lawloretienne:quickreturn:0.0.3'
     compile 'com.github.clans:fab:1.6.4'
-    compile 'com.github.liuguangqiang.swipeback:library:1.0.2@aar'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
+    compile 'com.github.arimorty:floatingsearchview:2.0.1'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 }

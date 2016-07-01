@@ -7,13 +7,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
@@ -21,7 +21,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -33,15 +32,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
-import in.medhajnews.app.Objects.Article;
-import in.medhajnews.app.Utils.ColorUtils;
-import in.medhajnews.app.Utils.GlideUtils;
+import in.medhajnews.app.data.ArticleDBHelper;
+import in.medhajnews.app.data.models.Story;
+import in.medhajnews.app.utils.ColorUtils;
+import in.medhajnews.app.utils.GlideUtils;
+import in.medhajnews.app.utils.Utils;
 
 public class ArticleActivity extends AppCompatActivity {
 
@@ -49,9 +51,11 @@ public class ArticleActivity extends AppCompatActivity {
     private CardView mBottomBar;
     private ImageView mFontSizeIcon, mUISwitchIcon, mBookmarkIcon, mShareIcon;
     private boolean isUiDark = false;
-    private boolean isArticleSaved = false;
     private LinearLayout mContentHolder;
     private ColorStateList OldTextColor;
+    TextView mTitleTextView;
+    private ArticleDBHelper mArticleDBHelper;
+    private CardView mContentCard;
 
     private Toast mToast;
     private SharedPreferences prefs;
@@ -60,11 +64,13 @@ public class ArticleActivity extends AppCompatActivity {
      * Preferences                  DefaultValue
      * //font_size                      16
      * //is_ui_state_dark              false
+     * //first_run                      true
      *
-     * //todo : add ranking counter as described in {@link in.medhajnews.app.Data.ArticleDBHelper}
+     * //todo : add ranking counter as described in {@link in.medhajnews.app.data.ArticleDBHelper}
      */
 
     //todo : show hints on first run
+    //todo : add tablet compatibility
 
     private final static String TAG = ArticleActivity.class.getSimpleName();
 
@@ -74,47 +80,52 @@ public class ArticleActivity extends AppCompatActivity {
     private TextView mAreaTextView;
     private TextView mUpdateTextView;
 
-    private Article mArticle;
+    private Story mStory;
 
     private CoordinatorLayout baseLayout;
+    private View mTransparentView;
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop called");
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("is_ui_state_dark", isUiDark);
         editor.apply();
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
-
-        if (getIntent() != null) {
-            mArticle = getIntent().getParcelableExtra("Article");
-        } else {
-            finish();
-        }
-
-
+        mStory = getIntent().getParcelableExtra(Story.INTENT_EXTRA);
+        prefs = getSharedPreferences(Utils.SHARED_PREFS, Context.MODE_PRIVATE);
         setContentView(R.layout.activity_article);
+
+        mArticleDBHelper = new ArticleDBHelper(this);
+
+
         mBackArrow = (ImageButton) findViewById(R.id.back_arrow);
         mSearchIcon = (ImageButton) findViewById(R.id.search_icon);
         baseLayout = (CoordinatorLayout) findViewById(R.id.article_base);
+        mContentCard = (CardView) findViewById(R.id.article_card);
+
+
+        Typeface alice = Typeface.createFromAsset(getAssets(), "fonts/Cambo.otf");
+        Log.d(TAG, mStory.author + mStory.title);
+
         mSearchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent search = new Intent(ArticleActivity.this, SearchActivity.class);
-                startActivity(search);
+                startActivity(new Intent(ArticleActivity.this, SearchActivity.class));
             }
         });
+
         mBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,43 +134,41 @@ public class ArticleActivity extends AppCompatActivity {
         });
 
         mBottomBar = (CardView) findViewById(R.id.bottom_bar);
-        mArticle = Article.sampleArticle(this);
 
         mFontSizeIcon = (ImageView) findViewById(R.id.font);
         mUISwitchIcon = (ImageView) findViewById(R.id.color);
         mBookmarkIcon = (ImageView) findViewById(R.id.bookmark);
         mShareIcon = (ImageView) findViewById(R.id.share);
+
+        mTransparentView = findViewById(R.id.transparent_view);
+
+
         /**
          * Share dialog takes a little time to load, On Android 5+ we'll animate the share icon to
-         * hide the delay. Unfortunately no feasible method of animations exist for lower API's
+         * hide the delay.
          */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mShareIcon != null) {
             mShareIcon.setImageResource(R.drawable.avd_share);
         }
 
-        if (Boolean.parseBoolean(mArticle.isArticleSaved)) {
+        if (mStory.isSaved) {
             mBookmarkIcon.setImageResource(R.drawable.ic_saved_offline);
         }
 
         mFontSizeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //change text size
                 showTextSizeSelectionDialog();
             }
         });
         mUISwitchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //toggle dark UI
-                toggleNightMode(ArticleActivity.this);
+            public void onClick(View v) {toggleNightMode(ArticleActivity.this);
             }
         });
         mBookmarkIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //download article to local database
-                downloadArticle(ArticleActivity.this);
+            public void onClick(View v) {downloadArticle(mStory);
             }
         });
         mShareIcon.setOnClickListener(new View.OnClickListener() {
@@ -168,12 +177,16 @@ public class ArticleActivity extends AppCompatActivity {
                 //todo (LP): check if share compilation is faster in production builds
                 //animate icon if API > 21
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mShareIcon != null) {
-                    ((AnimatedVectorDrawable) mShareIcon.getDrawable()).start();
+                    try {
+                        ((AnimatedVectorDrawable) mShareIcon.getDrawable()).start();
+                    } catch (ClassCastException err) {
+                        Log.e(TAG, "Failed to animate icon: Share");
+                    }
                 }
                 //start share
                 Intent share = new Intent(Intent.ACTION_SEND);
                 share.setType("text/plain");
-                String shareBody = mArticle.ArticleTitle + " " + mArticle.ArticleLink;
+                String shareBody = mStory.title + " " + mStory.title;
                 String shareSubject = "Shared via Medhaj News App"; //share subject
                 share.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
                 share.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
@@ -181,116 +194,95 @@ public class ArticleActivity extends AppCompatActivity {
             }
         });
 
-        prefs = getSharedPreferences("MedhajAppPreferences", Context.MODE_PRIVATE);
-//        Typeface lato = Typeface.createFromAsset(getAssets(), "Lato-Light.ttf");
 
         mContentHolder = (LinearLayout) findViewById(R.id.content_holder);
         ImageView mArticleImageView = (ImageView) findViewById(R.id.main_image);
         mContentTextView = (TextView) findViewById(R.id.main_content);
-        TextView mTitleTextView = (TextView) findViewById(R.id.content_title);
+        mTitleTextView = (TextView) findViewById(R.id.content_title);
         mAuthorTextView = (TextView) findViewById(R.id.content_author);
         mAreaTextView = (TextView) findViewById(R.id.content_area);
         mUpdateTextView = (TextView) findViewById(R.id.content_update_time);
         mDateTextView = (TextView) findViewById(R.id.content_date);
-//        mContentTextView.setTypeface(lato);
-        if (mArticleImageView != null) {
-            mArticleImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent gallery = new Intent(ArticleActivity.this, GalleryActivity.class);
-                    startActivity(gallery);
-                }
-            });
-        }
-        mContentTextView.setTextSize(prefs.getInt("font_size", 16));
-        mContentTextView.setText(mArticle.ArticleContent);
-        mTitleTextView.setText(mArticle.ArticleTitle);
-        mAuthorTextView.setText(mArticle.ArticleAuthor);
-        mAreaTextView.setText(mArticle.ArticleArea);
-        mDateTextView.setText(mArticle.ArticleDate);
-        mUpdateTextView.setText(mArticle.ArticleUpdateTime);
-        /*
-            initialise OldTextColor before calling nightmodetoggle
-         */
-        OldTextColor = mAuthorTextView.getTextColors();
-//        NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.main_scrollView);
-        mContentTextView.setOnLongClickListener(new View.OnLongClickListener() {
+        mContentTextView.setTypeface(alice);
+        mTransparentView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                new AlertDialog.Builder(ArticleActivity.this).setTitle("More Stuff")
-                        .setMessage("Placeholder").show();
-                return true;
+            public void onClick(View view) {
+                startActivity(new Intent(ArticleActivity.this, GalleryActivity.class));
             }
         });
-        //todo : replace scrollview with recyclerview
+        mContentTextView.setText(mStory.content.replace("<<>>", "\n\n"));
+        mTitleTextView.setText(mStory.title.trim());
+        mAuthorTextView.setText(mStory.author);
+        mAreaTextView.setText(mStory.area);
+        mDateTextView.setText(mStory.date);
+        mUpdateTextView.setText(mStory.time);
+        OldTextColor = mAuthorTextView.getTextColors();
+        //todo : add like and comment functionality
+        //todo : replace scrollview with recyclerview for more content type
 
-        Glide.with(this).load(mArticle.ArticleImageLink).listener(mainImageLoadListener)
-                .fitCenter().crossFade().into(mArticleImageView);
+        Glide.with(this)
+                .load(mStory.link_image.get(0))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .listener(mainImageLoadListener)
+                .fitCenter()
+                .crossFade()
+                .into(mArticleImageView);
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        //restore ui state
         if (prefs.getBoolean("is_ui_state_dark", false)) {
             toggleNightMode(this);
         }
+        mContentTextView.setTextSize(prefs.getInt("font_size", 16));
+        mTitleTextView.setTextSize(prefs.getInt("font_size", 16)+8);
     }
 
-    //Bottombar
     private void toggleNightMode(Context context) {
         if (!isUiDark) {
-            //make it dark
             isUiDark = true;
-            mContentTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mContentTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
-            mAuthorTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mAuthorTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
-            mAreaTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mAreaTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
-            mUpdateTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mUpdateTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
-            mDateTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
+            mTitleTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
             mDateTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white));
-            mContentHolder.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
-
+            baseLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             mBottomBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bottomBarDark));
+            mContentCard.setBackgroundColor(ContextCompat.getColor(context, R.color.darkui));
             switchBottomBarIcons(true, context);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.statusBarDark));
             }
         } else {
-            //make it light
             isUiDark = false;
-            mContentTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mContentTextView.setTextColor(ContextCompat.getColor(context, R.color.article_content));
-            mAuthorTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mAuthorTextView.setTextColor(OldTextColor);
-            mAreaTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mAreaTextView.setTextColor(OldTextColor);
-            mUpdateTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mUpdateTextView.setTextColor(OldTextColor);
-            mDateTextView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
             mDateTextView.setTextColor(OldTextColor);
-            mContentHolder.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-
+            mTitleTextView.setTextColor(ContextCompat.getColor(context, R.color.article_title));
+            baseLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+            mContentCard.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             switchBottomBarIcons(false, context);
             mBottomBar.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
             }
-
         }
+        mTransparentView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
     }
 
-    private void downloadArticle(Context context) {
-        //todo : download into local database
-        if (!isArticleSaved) {
+    private void downloadArticle(Story story) {
+        if (!story.isSaved) {
             showToast(getString(R.string.download_toast), false);
-            isArticleSaved = true;
+            mArticleDBHelper.SaveArticle(story);
             mBookmarkIcon.setImageResource(R.drawable.ic_saved_offline);
         } else {
             showToast(getString(R.string.article_delete), false);
-            isArticleSaved = false; //let a method handle this variable and edit the database
+            mArticleDBHelper.DeleteArticle(story);
             mBookmarkIcon.setImageResource(R.drawable.ic_save_offline);
         }
         if (isUiDark) {
@@ -307,23 +299,24 @@ public class ArticleActivity extends AppCompatActivity {
         fontSelectionDialog.setContentView(layout);
 
         final DiscreteSeekBar seekBar = (DiscreteSeekBar) layout.findViewById(R.id.font_seekbar);
-        ImageView imageView = (ImageView) layout.findViewById(R.id.fontsizesmall);
+        ImageView imageView = (ImageView) layout.findViewById(R.id.font_icon);
         if (isUiDark) {
             ColorUtils.applyThemeToDrawable(this, imageView.getDrawable(), R.color.lightIcon);
             layout.findViewById(R.id.base).setBackgroundColor(
                     ContextCompat.getColor(this, R.color.fontDialogDark)
             );
         }
-        seekBar.setProgress(prefs.getInt("font_size_multiplier", 0));
         seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
                     /**
                      *   view         initial sizes    maximum sizes
-                     *   content        16sp               33sp
+                     *   content        16sp               32sp
+                     *   title          24sp               40sp
                      */
-                    mContentTextView.setTextSize((progress));
+                    mContentTextView.setTextSize(progress);
+                    mTitleTextView.setTextSize(progress + 8);
                 }
             }
 
@@ -354,24 +347,8 @@ public class ArticleActivity extends AppCompatActivity {
         fontSelectionDialog.show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void switchBottomBarIcons(boolean makelight, Context context) {
-        int color;
-        if (makelight) {
-            color = R.color.lightIcon;
-        } else {
-            color = R.color.darkIcon;
-        }
+    public void switchBottomBarIcons(boolean lightMode, Context context) {
+        int color = lightMode ? R.color.lightIcon : R.color.mid_grey;
         ColorUtils.applyThemeToDrawable(context, mFontSizeIcon.getDrawable(), color);
         ColorUtils.applyThemeToDrawable(context, mUISwitchIcon.getDrawable(), color);
         ColorUtils.applyThemeToDrawable(context, mBookmarkIcon.getDrawable(), color);
@@ -382,9 +359,7 @@ public class ArticleActivity extends AppCompatActivity {
     private RequestListener mainImageLoadListener = new RequestListener<String, GlideDrawable>() {
         @Override
         public boolean onException(Exception e, String model, Target<GlideDrawable> target,
-                                   boolean isFirstResource) {
-            return false;
-        }
+                                   boolean isFirstResource) {return false;}
 
         @Override
         public boolean onResourceReady(GlideDrawable resource, String model,
@@ -412,10 +387,10 @@ public class ArticleActivity extends AppCompatActivity {
                                 }
 
                                 if (!isDark) { // make back icon dark on light images
-                                    mBackArrow.setColorFilter(ContextCompat.getColor(
-                                            ArticleActivity.this, R.color.dark_icon));
-                                    mSearchIcon.setColorFilter(ContextCompat.getColor(
-                                            ArticleActivity.this, R.color.dark_icon));
+                                    ColorUtils.applyThemeToDrawable(ArticleActivity.this,
+                                            mBackArrow.getDrawable() ,R.color.dark_icon);
+                                    ColorUtils.applyThemeToDrawable(ArticleActivity.this,
+                                            mSearchIcon.getDrawable(), R.color.dark_icon);
                                 }
                             }
                         });
@@ -425,10 +400,10 @@ public class ArticleActivity extends AppCompatActivity {
     };
 
     /**
-     * Dismisses the stale toast before making a fresh one
+     * Dismisses any stale toast before making a fresh one
      *
      * @param text         (String) toast text
-     * @param longDuration (boolean) toast duration
+     * @param longDuration (boolean) long duration
      */
     public void showToast(String text, boolean longDuration) {
         if (mToast != null) mToast.cancel();

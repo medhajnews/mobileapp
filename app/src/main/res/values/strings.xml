@@ -6,56 +6,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="article_main_image">Article Main Image</string>
-    <string name="sample_content_text">With the European championship starting in Paris on Saturday, all eyes will be on host France when its gets ball rolling against Romania in the Stade de France.
-
-World champion Germany will be targeting a first Euro title in 20 years while England seeks its first international success since the World Cup of 1996.
-
-Like always, the Euro will become a shopping mall for club managers to choose their stars from.
-
-Here comes the names of few players gearing up to make their move.
-
-
-
-Name: Alvaro Morata (Spain)
-
-Age: 23
-
-Position: Striker
-
-Current Club: Juventus
-
-
-
-Name: Antoine Greizmann (France)
-
-Age: 25
-
-Position: Forward
-
-Current Club: Atletico
-
-
-
-Name: Zlatan Ibrahimovic (Sweden)
-
-Age: 34
-
-Position: Forward
-
-Current Club: PSG
-
-
-
-
-
-Name: Christian Benteke (Belgium)
-
-Age: 25
-
-Position: Forward
-
-Current Club: Liverpool</string>
-    <string name="download_toast">This article will be shortly available in the downloaded section</string>
+    <string name="download_toast">This story will be shortly available in the downloaded section</string>
     <string name="sample_author">by Anubhav</string>
     <string name="sample_title">Why relying on your memories could compromise your security</string>
     <string name="sample_date">Jun 2, 2016</string>
@@ -70,7 +21,7 @@ Current Club: Liverpool</string>
     <string name="title_activity_base">BaseActivity</string>
     <string name="action_search">Search</string>
     <string name="search_hint">Search Medhaj News</string>
-    <string name="sample_image_link">https://medhaj-staging.s3.amazonaws.com/uploads/photo/data_file/44675/indian_test_team.jpg</string>
+    <string name="sample_image_link">https://medhaj-staging.s3.amazonaws.com/uploads/photo/data_file/45086/SUSHMA_SWARAJ_WITH_V_K_SINGH_AND_S_JAISHANKAR.jpg</string>
     <string name="sample_article_link">http://medhajnews.in/science_technology/news.php/pepsi-cola-like-oxygenated-drink-will-help-cure-cancer--34990--en</string>
     <string name="title_activity_news_cards">NewsCardsActivity</string>
     <string name="title_activity_news">Medhaj News</string>
@@ -146,4 +97,23 @@ Current Club: Liverpool</string>
     <string name="share">Share</string>
     <string name="save">Save Offline</string>
     <string name="color">Invert Colors</string>
+    <string name="upload_a_photo_video">Upload a photo/video</string>
+    <string name="action_feedback">Feedback</string>
+    <string name="action_login">Log In or Create Account</string>
+    <string name="language">Language</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="feedback_subject">Android App Feedback</string>
+    <string name="feedback_email">support@medhajnews.com</string>
+    <string name="action_rate">Rate app on PlayStore</string>
+    <string name="acc_font_size">Slide to adjust font size</string>
+    <string name="cancel">Cancel</string>
+    <string name="long_press_save">Save</string>
+    <string name="long_press_share">Share</string>
+    <string name="copyright">Looking for something, Try Searching \n\n © 2016 MedhajNews and Media Limited or its affiliated companies. All rights reserved</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_loading">Loading</string>
+    <plurals name="like_message">
+        <item quantity="one">%d Like</item>
+        <item quantity="other">%d Likes</item>
+    </plurals>
 </resources>

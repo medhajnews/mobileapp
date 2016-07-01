@@ -2,12 +2,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="in.medhajnews.app.NewsActivity">
-    <!--<item-->
-        <!--android:id="@+id/action_search"-->
-        <!--android:orderInCategory="2"-->
-        <!--app:showAsAction="ifRoom"-->
-        <!--android:icon="@drawable/ic_search_dark"-->
-        <!--android:title="@string/search" />-->
-    <!--help and feedback-->
-    <!--settings-->
+    <item android:id="@+id/action_settings"
+        android:orderInCategory="99"
+        app:showAsAction="never"
+        android:title="@string/action_settings"/>
+    <item android:id="@+id/action_feedback"
+        android:orderInCategory="98"
+        app:showAsAction="never"
+        android:title="@string/action_feedback"/>
+    <item android:id="@+id/action_login"
+        android:orderInCategory="97"
+        app:showAsAction="never"
+        android:title="@string/action_login" />
+    <item android:id="@+id/action_rate"
+        android:orderInCategory="96"
+        app:showAsAction="never"
+        android:title="@string/action_rate" />
+    <item android:id="@+id/action_notify"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="Sample Notification" />
 </menu>

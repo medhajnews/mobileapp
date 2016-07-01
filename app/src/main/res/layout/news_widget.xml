@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_card">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/refresh"
+            android:layout_width="0dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_weight="1"
+            android:src="@drawable/ic_close"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/action_refresh" />
+        <ImageButton
+            android:id="@+id/settings"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_settings"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/action_settings" />
+        <ImageView
+            android:id="@+id/app_logo"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:src="@drawable/newslogo"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name" />
+    </LinearLayout>
+    <ListView
+        android:id="@+id/widget_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"/>
+</LinearLayout>

@@ -1,32 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_content"
-    android:layout_width="match_parent"
+<FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="horizontal"
-    tools:context="in.medhajnews.app.CameraActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <FrameLayout
-        android:id="@+id/camera_preview"
-        android:layout_width="0dp"
-        android:layout_weight="5"
-        android:layout_height="match_parent">
-
-    </FrameLayout>
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:id="@+id/camera_preview"
+        android:layout_gravity="center" />
 
-        <Button
-            android:id="@+id/button_capture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Capture"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButton"
+        android:src="@drawable/ic_settings"
+        android:layout_gravity="start|center_vertical" />
 
-    </LinearLayout>
-</LinearLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButton2"
+        android:src="@drawable/ic_settings"
+        android:layout_gravity="end|center_vertical" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:textSize="16dp"
+        android:background="@color/darkui"
+        android:drawableEnd="@drawable/ic_close"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/upload_a_photo_video"
+        android:textAllCaps="true"
+        android:id="@+id/textView"
+        android:textColor="@color/white"
+        android:layout_gravity="center_horizontal|top" />
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/camera_control_layout"
+        android:layout_gravity="center_horizontal|bottom" />
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_horizontal|bottom">-->
+        <!--<Button-->
+            <!--android:id="@+id/button_gallery"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--style="@style/Base.Widget.AppCompat.Button.Borderless"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Gallery"/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/button_photo"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--style="@style/Base.Widget.AppCompat.Button.Borderless"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Click Photo"/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/button_video"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--style="@style/Base.Widget.AppCompat.Button.Borderless"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Capture"/>-->
+    <!--</LinearLayout>-->
+</FrameLayout>

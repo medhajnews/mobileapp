@@ -17,16 +17,24 @@
     <color name="lightIcon">#E0E0E0</color>
     <color name="fontDialogDark">#3F3F3F</color>
     <color name="newsCardActivityBackground">#EEEEEE</color>
-    <color name="dark_icon">#99000000</color> <!-- 60% black-->
+    <color name="dark_icon">#535353</color>
     <color name="inline_action_icon">#ff757575</color> <!-- grey 600 -->
     <color name="mid_grey">#40808080</color>
     <color name="dark_overlay">#88000000</color>
     <color name="fab_dark">#212121</color>
     <color name="control_background">#cc4285f4</color>
     <color name="fab_light">#FF3C53</color>
-    <color name="darkIcon">#535353</color>
     <color name="shareBackground">#0A0A0A</color>
     <color name="shareCard">#141414</color>
     <color name="shareCardText">#BCBCBC</color>
     <color name="shareStories">#E0E0E0</color>
+    <color name="sharePrimaryDark">#191919</color>
+    <color name="shareAccent">#FF3C53</color>
+    <color name="sharePrimary">#141414</color>
+    <color name="transparent">#00000000</color>
+    <!--widget card colors -->
+    <color name="card_background">#ffffff</color>
+    <color name="card_shadow_1">#d4d4d4</color>
+    <color name="card_shadow_2">#dddddd</color>
+    <color name="card_detailing">#eee</color>
 </resources>

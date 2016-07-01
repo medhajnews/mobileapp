@@ -12,13 +12,14 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:padding="4dp"
-        android:id="@+id/fontsizesmall"
-        android:src="@drawable/ic_text_size"/>
+        android:id="@+id/font_icon"
+        android:src="@drawable/ic_text_size"
+        android:contentDescription="@string/acc_font_size" />
 
     <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:dsb_max="33"
+        app:dsb_max="32"
         app:dsb_min="16"
         android:id="@+id/font_seekbar" />
 </LinearLayout>

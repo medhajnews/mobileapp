@@ -19,7 +19,7 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
 
-import in.medhajnews.app.Adapter.GalleryPagerAdapter;
+import in.medhajnews.app.adapters.GalleryPagerAdapter;
 
 public class GalleryActivity extends AppCompatActivity {
 

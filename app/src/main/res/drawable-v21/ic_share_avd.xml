@@ -25,12 +25,12 @@
     <path
         android:name="@string/name_dots"
         android:pathData="@string/path_share_dots"
-        android:fillColor="#535353" />
+        android:fillColor="#757575" />
 
     <path
         android:name="@string/name_lines"
         android:pathData="@string/path_share_lines"
-        android:strokeColor="#535353"
+        android:strokeColor="#757575"
         android:strokeLineCap="square"
         android:strokeWidth="2" />
 

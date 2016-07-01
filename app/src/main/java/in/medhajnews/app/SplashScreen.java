@@ -3,105 +3,69 @@ package in.medhajnews.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import java.net.InetAddress;
+import in.medhajnews.app.data.CacheDBHelper;
 
 /**
  * Created by bhav on 6/4/16 for the Medhaj News Project.
  */
 public class SplashScreen extends AppCompatActivity {
 
-    private NetworkingThread networkingThread;
+    private CacheDBHelper mCacheDBHelper;
+    private static final String TAG = SplashScreen.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        ImageView applogo = (ImageView) findViewById(R.id.app_logo);
-        ImageView appicon = (ImageView) findViewById(R.id.app_icon);
+        ImageView appLogo = (ImageView) findViewById(R.id.app_logo);
+        ImageView appIcon = (ImageView) findViewById(R.id.app_icon);
 
-        Glide.with(this).load(R.drawable.newslogo).crossFade().fitCenter().into(applogo);
-        Glide.with(this).load(R.mipmap.ic_launcher).crossFade().into(appicon);
+        Glide.with(this).load(R.drawable.newslogo).crossFade().fitCenter().into(appLogo);
+        Glide.with(this).load(R.mipmap.ic_launcher).crossFade().into(appIcon);
 
-        networkingThread = new NetworkingThread(SplashScreen.this);
-        networkingThread.execute();
+        mCacheDBHelper = new CacheDBHelper(this);
 
+        //todo : edit on switching API
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("https://tranquil-dusk-46393.herokuapp.com")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+
+//        DataFetcher fetcher = retrofit.create(DataFetcher.class);
+//        Call<List<DataItem>> call = fetcher.getData();
+
+////        call.enqueue(new Callback<ArrayList<Story>>() {
+////            @Override
+////            public void onResponse(Call<ArrayList<Story>> call, Response<ArrayList<Story>> response) {
+////                if(response.isSuccessful()) {
+//////                    for(Story a : response.body()) {
+////////                        mCacheDBHelper.addArticle(a);
+//////                    }
+////                    exitSplash(SplashScreen.this, true);
+////                } else {
+////                    exitSplash(SplashScreen.this, false);
+////                }
+////            }
+//
+//            @Override
+//            public void onFailure(Call<ArrayList<Story>> call, Throwable t) {
+//                t.printStackTrace();
+//                exitSplash(SplashScreen.this, false);
+//            }
+//        });
     }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
-    }
-
-    public boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-            return !ipAddr.equals("");
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private class NetworkingThread extends AsyncTask<Void, Void, Void> {
-
-        private String TAG = NetworkingThread.class.getSimpleName();
-        private boolean isInternetWorking = false;
-        private Context mContext;
-
-        NetworkingThread(Context context) {
-            this.mContext = context;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            // replace with useful code
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            // end replace
-            if(isNetworkConnected()) {
-                isInternetWorking = isInternetAvailable();
-            } else {
-                isInternetWorking = false;
-            }
-            Log.d(TAG, String.valueOf(isInternetWorking));
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            exitSplash(mContext, isInternetWorking);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //stop background tasks
-        if(networkingThread!=null) {
-            if (networkingThread.getStatus() != AsyncTask.Status.FINISHED) {
-                networkingThread.cancel(true);
-            }
-        }
-    }
-
-    public static void exitSplash(Context context, boolean isInternetAvailble) {
-        Intent main = new Intent(context, MainActivity.class);
-        main.putExtra("internet_available", isInternetAvailble);
+    public static void exitSplash(Context context, boolean isInternetAvailable) {
+        Intent main = new Intent(context, NewsActivity.class);
+        main.putExtra("internet_available", isInternetAvailable);
         context.startActivity(main);
         ((Activity) context).finish();
     }

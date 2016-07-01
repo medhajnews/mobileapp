@@ -40,103 +40,44 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-    <android.support.v7.widget.CardView
-        android:id="@+id/share_card_view"
-        android:layout_width="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        app:contentPadding="8dp"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/shareCard">
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/share_card_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_marginTop="?attr/actionBarSize"-->
+        <!--app:contentPadding="8dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:cardBackgroundColor="@color/shareCard">-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/share_intro"
-                android:textColor="@color/shareCardText"
-                android:textSize="16sp" />
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/share_intro"-->
+                <!--android:textColor="@color/shareCardText"-->
+                <!--android:textSize="16sp" />-->
 
-            <Button
-                style="?attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:id="@+id/get_started"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="@string/get_started"
-                android:textColor="@color/fab_light" />
+            <!--<Button-->
+                <!--style="?attr/borderlessButtonStyle"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="end"-->
+                <!--android:id="@+id/get_started"-->
+                <!--android:background="?attr/selectableItemBackgroundBorderless"-->
+                <!--android:text="@string/get_started"-->
+                <!--android:textColor="@color/fab_light" />-->
 
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+        <!--</LinearLayout>-->
+    <!--</android.support.v7.widget.CardView>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/shared_stories_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="56dp"
-        android:animateLayoutChanges="true"
-        android:layout_alignParentBottom="true"
-        app:cardElevation="6dp"
-        app:layout_behavior="in.medhajnews.app.Widgets.Behavior.BottomBarBehavior"
-        android:layout_gravity="bottom"
-        android:id="@+id/bottom_bar">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="56dp"
-            android:id="@+id/bottom_button_bar_linear_layout">
-
-            <ImageView
-                android:id="@+id/font"
-                android:padding="12dp"
-                android:layout_gravity="center"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_text_size"
-                android:contentDescription="@null" />
-
-            <ImageView
-                android:id="@+id/color"
-                android:padding="12dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_gravity="center"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_night_mode_toggle"/>
-
-            <ImageView
-                android:id="@+id/bookmark"
-                android:layout_width="0dp"
-                android:padding="12dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_save_offline"/>
-
-            <ImageView
-                android:id="@+id/share"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:layout_gravity="center"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_share"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
 
     <android.support.design.widget.FloatingActionButton
     android:id="@+id/fab"
@@ -146,72 +87,7 @@
     android:layout_margin="@dimen/fab_margin"
     android:src="@drawable/ic_add"
     app:backgroundTint="@color/fab_light"
-    app:layout_behavior="in.medhajnews.app.Widgets.Behavior.FabScrollBehavior" />
+    app:layout_behavior="in.medhajnews.app.widgets.behavior.FabScrollBehavior" />
 
 
 </android.support.design.widget.CoordinatorLayout>
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:orientation="vertical"-->
-    <!--android:paddingBottom="@dimen/activity_vertical_margin"-->
-    <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-    <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
-    <!--android:paddingTop="@dimen/activity_vertical_margin"-->
-    <!--tools:context="in.medhajnews.app.ShareActivity">-->
-
-
-
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginTop="4dp"-->
-        <!--android:paddingStart="8dp"-->
-        <!--android:paddingEnd="8dp"-->
-        <!--android:layout_marginBottom="4dp"-->
-        <!--android:orientation="horizontal">-->
-        <!--<TextView-->
-            <!--android:layout_width="0dp"-->
-            <!--android:text="@string/stories"-->
-            <!--android:gravity="center_vertical"-->
-            <!--android:textAllCaps="true"-->
-            <!--android:textColor="@color/shareStories"-->
-            <!--android:layout_weight="1"-->
-            <!--android:layout_height="match_parent" />-->
-        <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/ic_grid"-->
-            <!--android:background="?attr/selectableItemBackgroundBorderless"-->
-            <!--android:contentDescription="@null" />-->
-    <!--</LinearLayout>-->
-
-
-    <!--<FrameLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-
-
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/view2"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="end|bottom"-->
-            <!--android:src="@drawable/ic_add" />-->
-    <!--</FrameLayout>-->
-
-    <!--<android.support.v7.widget.CardView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="56dp">-->
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent">-->
-
-        <!--</LinearLayout>-->
-    <!--</android.support.v7.widget.CardView>-->
-
-<!--</android.support.design.widget.CoordinatorLayout>-->

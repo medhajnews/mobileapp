@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="#f5f5f5"
     tools:context="in.medhajnews.app.NewsActivity">
+
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -53,26 +55,24 @@
             app:tabGravity="fill"
             app:tabIndicatorColor="@color/article_title"
             app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/article_title"
-            app:tabTextColor="@color/article_info" />
+            app:tabSelectedTextColor="@color/fab_dark"
+            app:tabTextColor="@color/mid_grey" />
 
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="match_parent"/>
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-    <!--android:id="@+id/news_fab"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="end|bottom"-->
-    <!--android:layout_margin="@dimen/fab_margin"-->
-    <!--android:src="@drawable/ic_settings_fab"-->
-    <!--app:backgroundTint="#212121"-->
-    <!--app:layout_behavior="in.medhajnews.app.Widgets.Behavior.FabScrollBehavior" />-->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fam"
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_behavior="in.medhajnews.app.Widgets.Behavior.FabMenuScrollBehavior"
+        app:layout_behavior="in.medhajnews.app.widget.behavior.FabMenuScrollBehavior"
         app:menu_colorNormal="#212121"
         app:menu_colorPressed="#212121">
 
@@ -99,15 +99,5 @@
             app:menu_colorNormal="#212121"
             app:menu_colorPressed="#212121"
             android:src="@drawable/ic_saved_articles_fab"/>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_label="Settings"
-            android:id="@+id/fab_settings"
-            app:menu_colorNormal="#212121"
-            app:menu_colorPressed="#212121"
-            android:src="@drawable/ic_settings"/>
     </com.github.clans.fab.FloatingActionMenu>
-
 </android.support.design.widget.CoordinatorLayout>

@@ -12,4 +12,29 @@
     <dimen name="popup_width">300dp</dimen>
     <dimen name="popup_height">300dp</dimen>
     <dimen name="fab_size_normal">56dp</dimen>
+    <dimen name="focus_inner_offset">24dp</dimen>
+    <dimen name="focus_outer_stroke">3dp</dimen>
+    <dimen name="focus_inner_stroke">2dp</dimen>
+    <dimen name="pie_radius_start">80dp</dimen>
+    <dimen name="pie_touch_offset">40dp</dimen>
+    <dimen name="pie_radius_increment">60dp</dimen>
+    <dimen name="focus_radius_offset">8dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="adWidth">96dp</dimen>
+    <bool name="isTab">false</bool>
+
+    <!--Thy Guardian shall provide-->
+    <dimen name="action_bar_height">52dp</dimen>
+    <dimen name="prompt_popup_height">88dp</dimen>
+
+    <dimen name="prompt_popup_with_image_height">118dp</dimen>
+    <dimen name="prompt_arrow_margin_top">4dp</dimen>
+    <dimen name="prompt_arrow_margin_left">50dp</dimen>
+    <dimen name="prompt_arrow_save_for_later_signed_margin_left">148dp</dimen>
+    <dimen name="prompt_arrow_save_for_later_margin_left">198dp</dimen>
+    <dimen name="prompt_text_title_big_size">26sp</dimen>
+    <dimen name="prompt_text_title_size">20sp</dimen>
+    <dimen name="prompt_text_body_size">14sp</dimen>
+    <dimen name="prompt_icon_size">28dp</dimen>
+    <dimen name="prompt_icon_padding">4dp</dimen>
 </resources>

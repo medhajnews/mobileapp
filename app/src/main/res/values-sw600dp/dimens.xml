@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="isTab">true</bool>
+    <dimen name="adWidth">128dp</dimen>
+</resources>
