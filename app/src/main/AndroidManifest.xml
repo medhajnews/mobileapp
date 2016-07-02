@@ -31,27 +31,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SplashScreen"
+            android:name=".ui.SplashScreen"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
 
         </activity>
         <activity
-            android:name=".ArticleActivity"
+            android:name=".ui.ArticleActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".VideoActivity"
+            android:name=".ui.VideoActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".GalleryActivity"
+            android:name=".ui.GalleryActivity"
             android:label="@string/title_activity_gallery"
             android:theme="@style/AppTheme.NoActionAndStatusBar">
         </activity>
         <activity
-            android:name=".NewsActivity"
+            android:name=".ui.NewsActivity"
             android:label="@string/title_activity_news"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -61,28 +61,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SearchActivity"
+            android:name=".ui.SearchActivity"
             android:label="@string/title_activity_search"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".NewsActivity">
+            android:parentActivityName=".ui.NewsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.medhajnews.app.NewsActivity" />
+                android:value=".ui.NewsActivity" />
         </activity>
         <activity
-            android:name=".CameraActivity"
+            android:name=".ui.CameraActivity"
             android:theme="@style/AppTheme.NoActionAndStatusBar" />
         <activity
-            android:name=".ShareActivity"
+            android:name=".ui.ShareActivity"
             android:theme="@style/AppTheme.ShareStory" />
-        <activity android:name=".SavedArticlesActivity" />
-
+        <activity android:name=".ui.SavedArticlesActivity" />
         <service android:name=".services.NewsFetchService" />
         <service android:name=".services.SaveService" />
-        <receiver android:name=".widget.NewsWidgetProvider" >
+        <receiver android:name=".ui.widget.NewsWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

@@ -6,7 +6,7 @@ package in.medhajnews.app.data;
 public class Priority {
     /**
      * Category priorities
-     * Don't forget to update Tabs in {@link in.medhajnews.app.adapters.MainPagerAdapter} when
+     * Don't forget to update Tabs in {@link in.medhajnews.app.ui.adapters.MainPagerAdapter} when
      * adding new tabs.
      */
     public static final int INDIA = 1;

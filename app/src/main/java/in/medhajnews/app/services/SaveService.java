@@ -7,8 +7,8 @@ import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import in.medhajnews.app.data.ArticleDBHelper;
-import in.medhajnews.app.data.models.Story;
-import in.medhajnews.app.utils.NotificationUtils;
+import in.medhajnews.app.data.api.models.Story;
+import in.medhajnews.app.util.Notification;
 
 /**
  * Created by bhav on 6/27/16 for the Medhaj News Project.
@@ -37,7 +37,7 @@ public class SaveService extends Service {
                 articleDB.SaveArticle(mStory);
             }
             Toast.makeText(SaveService.this, "Story Saved Successfully", Toast.LENGTH_SHORT).show();
-            NotificationUtils.cancelNotification(intent.getIntExtra(NotificationUtils.ID_EXTRA, 99));
+            Notification.cancelNotification(intent.getIntExtra(Notification.ID_EXTRA, 99));
         }
         stopSelf();
         return super.onStartCommand(intent, flags, startId);

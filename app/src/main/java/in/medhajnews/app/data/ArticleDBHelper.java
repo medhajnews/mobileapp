@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import in.medhajnews.app.data.models.Comment;
-import in.medhajnews.app.data.models.Story;
+import in.medhajnews.app.data.api.models.Comment;
+import in.medhajnews.app.data.api.models.Story;
 
 /**
  * Created by bhav on 6/11/16 for the Medhaj News Project.
