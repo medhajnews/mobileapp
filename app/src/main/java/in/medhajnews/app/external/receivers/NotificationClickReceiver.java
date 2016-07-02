@@ -1,10 +1,10 @@
-package in.medhajnews.app.receivers;
+package in.medhajnews.app.external.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import in.medhajnews.app.services.SaveService;
+import in.medhajnews.app.external.services.SaveService;
 
 /**
  * Created by bhav on 6/27/16 for the Medhaj News Project.

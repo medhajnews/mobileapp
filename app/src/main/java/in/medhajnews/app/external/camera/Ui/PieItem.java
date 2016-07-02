@@ -1,4 +1,4 @@
-package in.medhajnews.app.camera.Ui;
+package in.medhajnews.app.external.camera.Ui;
 
 /*
  * Copyright (C) 2012 The Android Open Source Project

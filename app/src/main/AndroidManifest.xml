@@ -79,8 +79,8 @@
             android:name=".ui.ShareActivity"
             android:theme="@style/AppTheme.ShareStory" />
         <activity android:name=".ui.SavedArticlesActivity" />
-        <service android:name=".services.NewsFetchService" />
-        <service android:name=".services.SaveService" />
+        <service android:name=".external.services.NewsFetchService" />
+        <service android:name=".external.services.SaveService" />
         <receiver android:name=".ui.widget.NewsWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

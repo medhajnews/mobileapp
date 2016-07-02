@@ -1,4 +1,4 @@
-package in.medhajnews.app.camera;
+package in.medhajnews.app.external.camera;
 
 import android.content.Context;
 import android.hardware.Camera;

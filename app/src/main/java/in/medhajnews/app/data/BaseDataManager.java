@@ -24,6 +24,7 @@ public abstract class BaseDataManager<T> implements DataLoadingSubject {
     private SearchService searchApi;
     private List<DataLoadingCallbacks> loadingCallbacks;
 
+
     protected BaseDataManager(@NonNull Context context) {
         loadingCount = new AtomicInteger(0);
         medhajPrefs = MedhajPrefs.get(context);
@@ -32,6 +33,8 @@ public abstract class BaseDataManager<T> implements DataLoadingSubject {
     public abstract void onDataLoaded(T data);
 
     public abstract void cancelLoading();
+
+//    public abstract void onLoadFailed();
 
     @Override
     public boolean isLoading() {
@@ -73,6 +76,12 @@ public abstract class BaseDataManager<T> implements DataLoadingSubject {
         }
     }
 
+    protected void loadFailed() {
+        if(0 == loadingCount.getAndIncrement()) {
+            dispatchLoadingFailedCallbacks();
+        }
+    }
+
     protected void resetLoadingCount() {
         loadingCount.set(0);
     }
@@ -88,6 +97,13 @@ public abstract class BaseDataManager<T> implements DataLoadingSubject {
         if (loadingCallbacks == null || loadingCallbacks.isEmpty()) return;
         for (DataLoadingCallbacks loadingCallback : loadingCallbacks) {
             loadingCallback.loadingFinished();
+        }
+    }
+
+    protected void dispatchLoadingFailedCallbacks() {
+        if(loadingCallbacks == null || loadingCallbacks.isEmpty()) return;
+        for (DataLoadingCallbacks loadingCallback : loadingCallbacks) {
+            loadingCallback.loadingFailed();
         }
     }
 

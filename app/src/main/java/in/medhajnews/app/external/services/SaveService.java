@@ -1,4 +1,4 @@
-package in.medhajnews.app.services;
+package in.medhajnews.app.external.services;
 
 import android.app.Service;
 import android.content.Intent;

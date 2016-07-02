@@ -12,7 +12,7 @@ import in.medhajnews.app.ui.ArticleActivity;
 import in.medhajnews.app.R;
 import in.medhajnews.app.ui.SettingsActivity;
 import in.medhajnews.app.data.api.models.Story;
-import in.medhajnews.app.services.SaveService;
+import in.medhajnews.app.external.services.SaveService;
 
 /**
  * Created by bhav on 6/26/16 for the Medhaj News Project.

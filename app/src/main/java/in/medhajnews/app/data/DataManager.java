@@ -2,7 +2,6 @@ package in.medhajnews.app.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +52,7 @@ public abstract class DataManager extends BaseDataManager<List<? extends DataIte
     }
 
     private void loadFailed(String key) {
-        loadFinished();
+        loadFailed();
         callMap.remove(key);
     }
 
@@ -66,7 +65,6 @@ public abstract class DataManager extends BaseDataManager<List<? extends DataIte
                     if(response.body() != null && !response.body().isEmpty()) {
                         loadFinished();
                         onDataLoaded(response.body());
-                        Log.d("as", "loaded top stories");
                     }
                 } else {
                     loadFailed(STORIES);
@@ -90,7 +88,6 @@ public abstract class DataManager extends BaseDataManager<List<? extends DataIte
                     if(response.body() != null && !response.body().isEmpty()) {
                         loadFinished();
                         onDataLoaded(response.body());
-                        Log.d("as", "loaded photos");
                     }
                 } else {
                     loadFailed(PHOTOS);
@@ -114,7 +111,6 @@ public abstract class DataManager extends BaseDataManager<List<? extends DataIte
                     if(response.body() != null && !response.body().isEmpty()) {
                         loadFinished();
                         onDataLoaded(response.body());
-                        Log.d("as", "loaded ads");
                     }
                 } else {
                     loadFailed(ADS);

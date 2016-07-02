@@ -12,5 +12,6 @@ public interface DataLoadingSubject {
     interface DataLoadingCallbacks {
         void loadingStarted();
         void loadingFinished();
+        void loadingFailed();
     }
 }

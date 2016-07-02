@@ -1,4 +1,4 @@
-package in.medhajnews.app.receivers;
+package in.medhajnews.app.external.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

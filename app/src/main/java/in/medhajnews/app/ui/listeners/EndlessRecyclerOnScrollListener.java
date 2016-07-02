@@ -1,4 +1,4 @@
-package in.medhajnews.app.listeners;
+package in.medhajnews.app.ui.listeners;
 
 /**
  * Created by bhav on 6/27/16 for the Medhaj News Project.

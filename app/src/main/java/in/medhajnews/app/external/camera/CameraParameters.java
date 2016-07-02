@@ -1,4 +1,4 @@
-package in.medhajnews.app.camera;
+package in.medhajnews.app.external.camera;
 
 /**
  * Created by bhav on 6/18/16 for the Medhaj News Project.

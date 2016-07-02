@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -27,14 +28,14 @@ import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
-import in.medhajnews.app.ui.ArticleActivity;
 import in.medhajnews.app.R;
-import in.medhajnews.app.data.ArticleDBHelper;
-import in.medhajnews.app.data.objects.DataItem;
 import in.medhajnews.app.data.api.models.Advert;
+import in.medhajnews.app.data.api.models.Photo;
 import in.medhajnews.app.data.api.models.Story;
-import in.medhajnews.app.util.ObservableColorMatrix;
+import in.medhajnews.app.data.objects.DataItem;
+import in.medhajnews.app.ui.ArticleActivity;
 import in.medhajnews.app.ui.widget.BadgedFourThreeImageView;
+import in.medhajnews.app.util.ObservableColorMatrix;
 
 /**
  * Created by bhav on 6/9/16 for the Medhaj News Project.
@@ -45,13 +46,13 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static final String TAG = NewsCardAdapter.class.getSimpleName();
 
     private static final int VIEW_TYPE_LARGE = 1;
-    private static final int VIEW_TYPE_NORMAL = 2;
+    private static final int VIEW_TYPE_NORMAL = 2; // ? need design
     private static final int VIEW_TYPE_CONDENSED = 3;
     private static final int VIEW_TYPE_STUB = 4;
+    private static final int VIEW_TYPE_PHOTO = 5;
     // use VIEW_TYPE advertisement to insert ads into the recyclerview
     private static final int VIEW_TYPE_ADVERTISEMENT = 9;
 
-    private ArticleDBHelper mArticleHelper;
 
 
 
@@ -65,7 +66,6 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.mLoadList = items;
         this.showCategory = isRecommendedSection;
         layoutInflater = LayoutInflater.from(context);
-        mArticleHelper = new ArticleDBHelper(context);
     }
 
     @Override
@@ -81,6 +81,8 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return createCondensedCardHolder(parent);
             case VIEW_TYPE_STUB :
                 return createStubHolder(parent);
+            case VIEW_TYPE_PHOTO :
+                return createPhotoViewHolder(parent);
         }
         return null;
     }
@@ -103,6 +105,8 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case VIEW_TYPE_STUB :
                 bindStubView((StubHolder) holder);
                 break;
+            case VIEW_TYPE_PHOTO :
+                bindPhotoView((Photo) mLoadList.get(position), (PhotoHolder) holder);
         }
     }
 
@@ -123,6 +127,8 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if(position < getDataItemCount() && getDataItemCount() > 0) {
             if(getItemAt(position) instanceof Advert) {
                 return VIEW_TYPE_ADVERTISEMENT;
+            } else if(getItemAt(position) instanceof Photo) {
+                return VIEW_TYPE_PHOTO;
             } else if(getItemAt(position) instanceof Story) {
                 if(position==0) {
                     return VIEW_TYPE_LARGE;
@@ -140,6 +146,8 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public int getItemCount() {
         return mLoadList.size() == 0 ? 0 : mLoadList.size() + 1;
     }
+
+    /* View Holders */
 
     public static class CardHolder extends RecyclerView.ViewHolder {
 
@@ -199,6 +207,15 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    private static class PhotoHolder extends RecyclerView.ViewHolder {
+        public BadgedFourThreeImageView photoStory;
+
+        public PhotoHolder(View itemView) {
+            super(itemView);
+            photoStory = (BadgedFourThreeImageView) itemView.findViewById(R.id.main_image);
+        }
+    }
+
     private static class AdHolder extends RecyclerView.ViewHolder {
 
         public BadgedFourThreeImageView adImage;
@@ -219,10 +236,11 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    /* View Creators */
     private AdHolder createAdHolder(ViewGroup parent) {
         //todo : check for crash and change badgedimageview
         final AdHolder holder = new AdHolder(layoutInflater
-                .inflate(R.layout.item_advertisement, parent, false));
+                .inflate(R.layout.itemview_adverts, parent, false));
         holder.adImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -242,13 +260,13 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private LargeCardHolder createLargeCardHolder(ViewGroup parent) {
         final LargeCardHolder holder = new LargeCardHolder(layoutInflater
-        .inflate(R.layout.itemview_article_important, parent, false));
+        .inflate(R.layout.itemview_story_large, parent, false));
         return holder;
     }
 
     private CondensedCardHolder createCondensedCardHolder(ViewGroup parent) {
         final CondensedCardHolder holder = new CondensedCardHolder(layoutInflater
-        .inflate(R.layout.itemview_article_condensed, parent, false));
+        .inflate(R.layout.itemview_story, parent, false));
         return holder;
     }
 
@@ -257,8 +275,32 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         .inflate(R.layout.itemview_stub, parent, false));
     }
 
+    private PhotoHolder createPhotoViewHolder(ViewGroup parent) {
+        final PhotoHolder holder = new PhotoHolder(layoutInflater
+        .inflate(R.layout.itemview_image_story, parent, false));
+//        holder.photoStory.setBadgeColor(initialGifBadgeColor);
+        holder.photoStory.showBadge(true);
+        holder.photoStory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(mContext, "Hi", Toast.LENGTH_SHORT).show();
+            }
+        });
+        return holder;
+    }
+
+    /* View Binders */
+    private void bindPhotoView(final Photo photo, final PhotoHolder holder) {
+        Glide.with(mContext)
+                .load(photo.link_image.get(0))
+                .crossFade()
+                .centerCrop()
+                .placeholder(R.color.dark_icon)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(holder.photoStory);
+    }
+
     private void bindCardView(final Story story, final CardHolder holder){
-        Log.d(TAG, String.valueOf(story.id));
         holder.newsBase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -312,6 +354,8 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.endText.setText(R.string.copyright);
     }
 
+
+    /*  Glide Load Callbacks */
     private RequestListener<String, GlideDrawable>
     getFadeInRequestListener(final LargeCardHolder holder) {
         return new RequestListener<String, GlideDrawable>() {

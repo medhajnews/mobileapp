@@ -34,7 +34,7 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
 
     public BadgedFourThreeImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        badge = new AdBadge(context);
+        badge = new Badge(context);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BadgedImageView, 0, 0);
         badgeGravity = a.getInt(R.styleable.BadgedImageView_badgeGravity, Gravity.END | Gravity
                 .BOTTOM);
@@ -84,9 +84,9 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
     /**
      * A drawable for indicating that an image is animated
      */
-    private static class AdBadge extends Drawable {
+    public static class Badge extends Drawable {
 
-        private static final String AD = "AD";
+        public String badgeText = "AD";
         private static final int TEXT_SIZE = 12;    // sp
         private static final int PADDING = 4;       // dp
         private static final int CORNER_RADIUS = 2; // dp
@@ -98,7 +98,7 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
         private static int height;
         private final Paint paint;
 
-        AdBadge(Context context) {
+        Badge(Context context) {
             if (bitmap == null) {
                 final DisplayMetrics dm = context.getResources().getDisplayMetrics();
                 final float density = dm.density;
@@ -111,7 +111,7 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
                 final float padding = PADDING * density;
                 final float cornerRadius = CORNER_RADIUS * density;
                 final Rect textBounds = new Rect();
-                textPaint.getTextBounds(AD, 0, AD.length(), textBounds);
+                textPaint.getTextBounds(badgeText, 0, badgeText.length(), textBounds);
                 height = (int) (padding + textBounds.height() + padding);
                 width = (int) (padding + textBounds.width() + padding);
                 bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -126,9 +126,9 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
                 } else {
                     canvas.drawRect(0, 0, width, height, backgroundPaint);
                 }
-                // punch out the word 'GIF', leaving transparency
+                // punch out the word , leaving transparency
                 textPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                canvas.drawText(AD, padding, height - padding, textPaint);
+                canvas.drawText(badgeText, padding, height - padding, textPaint);
             }
             paint = new Paint();
         }
@@ -151,6 +151,10 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
         @Override
         public void setAlpha(int alpha) {
             // ignored
+        }
+
+        public void setBadgeText(String s) {
+            badgeText = s.toUpperCase();
         }
 
         @Override

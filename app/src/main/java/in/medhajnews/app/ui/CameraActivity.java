@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.medhajnews.app.R;
-import in.medhajnews.app.camera.CameraCallbacks;
-import in.medhajnews.app.camera.CameraPreview;
+import in.medhajnews.app.external.camera.CameraCallbacks;
+import in.medhajnews.app.external.camera.CameraPreview;
 import in.medhajnews.app.data.ImageHandler;
 
 public class CameraActivity extends Activity {
