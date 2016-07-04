@@ -44,6 +44,7 @@ import in.medhajnews.app.R;
 import in.medhajnews.app.data.ArticleDBHelper;
 import in.medhajnews.app.data.api.models.Story;
 import in.medhajnews.app.ui.fragments.BottomSheet;
+import in.medhajnews.app.ui.widget.FourThreeImageView;
 import in.medhajnews.app.util.ColorUtils;
 import in.medhajnews.app.util.GlideUtils;
 import in.medhajnews.app.util.Utils;
@@ -166,10 +167,6 @@ public class ArticleActivity extends AppCompatActivity {
         mBookmarkIcon = (ImageView) findViewById(R.id.bookmark);
         mShareIcon = (ImageView) findViewById(R.id.share);
 
-        View mTransparentView = findViewById(R.id.transparent_view);
-
-
-
         /**
          * Share dialog takes a little time to load, On Android 5+ we'll animate the share icon to
          * hide the delay.
@@ -223,7 +220,7 @@ public class ArticleActivity extends AppCompatActivity {
 
 
         mContentHolder = (LinearLayout) findViewById(R.id.content_holder);
-        ImageView mArticleImageView = (ImageView) findViewById(R.id.main_image);
+        FourThreeImageView mArticleImageView = (FourThreeImageView) findViewById(R.id.main_image);
         mContentTextView = (TextView) findViewById(R.id.main_content);
         mTitleTextView = (TextView) findViewById(R.id.content_title);
         mAuthorTextView = (TextView) findViewById(R.id.content_author);
@@ -233,12 +230,13 @@ public class ArticleActivity extends AppCompatActivity {
         Typeface cambo = Typeface.createFromAsset(getAssets(), "fonts/Cambo.otf");
         mContentTextView.setTypeface(cambo);
 
-        mTransparentView.setOnClickListener(new View.OnClickListener() {
+        mArticleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(ArticleActivity.this, GalleryActivity.class));
             }
         });
+
         mContentTextView.setText(mStory.content.replace("<<>>", "\n\n"));
         mTitleTextView.setText(mStory.title.trim());
         mAuthorTextView.setText(mStory.author);
@@ -247,12 +245,19 @@ public class ArticleActivity extends AppCompatActivity {
         mUpdateTextView.setText(mStory.time);
         OldTextColor = mAuthorTextView.getTextColors();
         //todo : replace scrollview with recyclerview for more content type
+        TextView category = (TextView) findViewById(R.id.category);
+        category.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+            }
+        });
+        category.setText(String.format(" %s ", mStory.category.toUpperCase()));
         Glide.with(this)
                 .load(mStory.link_image.get(0))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .listener(mainImageLoadListener)
-                .fitCenter()
+//                .fitCenter()
                 .crossFade()
                 .into(mArticleImageView);
     }
@@ -260,10 +265,7 @@ public class ArticleActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        //restore ui state
-        if (prefs.getBoolean("is_ui_state_dark", false)) {
-            toggleNightMode(this);
-        }
+        if (prefs.getBoolean("is_ui_state_dark", false)) toggleNightMode(this);
         mContentTextView.setTextSize(prefs.getInt("font_size", 16));
         mTitleTextView.setTextSize(prefs.getInt("font_size", 16)+8);
     }

@@ -34,13 +34,13 @@ import in.medhajnews.app.data.api.models.Photo;
 import in.medhajnews.app.data.api.models.Story;
 import in.medhajnews.app.data.objects.DataItem;
 import in.medhajnews.app.ui.ArticleActivity;
+import in.medhajnews.app.ui.NewsActivity;
 import in.medhajnews.app.ui.widget.BadgedFourThreeImageView;
 import in.medhajnews.app.util.ObservableColorMatrix;
 
 /**
  * Created by bhav on 6/9/16 for the Medhaj News Project.
  */
-//todo : recyclerview.holder
 public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final String TAG = NewsCardAdapter.class.getSimpleName();
@@ -50,10 +50,9 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int VIEW_TYPE_CONDENSED = 3;
     private static final int VIEW_TYPE_STUB = 4;
     private static final int VIEW_TYPE_PHOTO = 5;
+    private static final int VIEW_TYPE_TWIN = 6;
     // use VIEW_TYPE advertisement to insert ads into the recyclerview
     private static final int VIEW_TYPE_ADVERTISEMENT = 9;
-
-
 
 
     private Context mContext;
@@ -71,17 +70,17 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case VIEW_TYPE_ADVERTISEMENT :
+            case VIEW_TYPE_ADVERTISEMENT:
                 return createAdHolder(parent);
-            case VIEW_TYPE_LARGE :
+            case VIEW_TYPE_LARGE:
                 return createLargeCardHolder(parent);
-            case VIEW_TYPE_NORMAL :
+            case VIEW_TYPE_NORMAL:
                 return createCardHolder(parent);
-            case VIEW_TYPE_CONDENSED :
+            case VIEW_TYPE_CONDENSED:
                 return createCondensedCardHolder(parent);
-            case VIEW_TYPE_STUB :
+            case VIEW_TYPE_STUB:
                 return createStubHolder(parent);
-            case VIEW_TYPE_PHOTO :
+            case VIEW_TYPE_PHOTO:
                 return createPhotoViewHolder(parent);
         }
         return null;
@@ -89,23 +88,23 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        switch(getItemViewType(position)) {
-            case VIEW_TYPE_ADVERTISEMENT :
+        switch (getItemViewType(position)) {
+            case VIEW_TYPE_ADVERTISEMENT:
                 bindAdvertisementView((Advert) mLoadList.get(position), (AdHolder) holder);
                 break;
-            case VIEW_TYPE_CONDENSED :
+            case VIEW_TYPE_CONDENSED:
                 bindCondensedCardView((Story) mLoadList.get(position), (CondensedCardHolder) holder);
                 break;
-            case VIEW_TYPE_LARGE :
+            case VIEW_TYPE_LARGE:
                 bindLargeCardView((Story) mLoadList.get(position), (LargeCardHolder) holder);
                 break;
-            case VIEW_TYPE_NORMAL :
+            case VIEW_TYPE_NORMAL:
                 bindCardView((Story) mLoadList.get(position), (CardHolder) holder);
                 break;
-            case VIEW_TYPE_STUB :
+            case VIEW_TYPE_STUB:
                 bindStubView((StubHolder) holder);
                 break;
-            case VIEW_TYPE_PHOTO :
+            case VIEW_TYPE_PHOTO:
                 bindPhotoView((Photo) mLoadList.get(position), (PhotoHolder) holder);
         }
     }
@@ -118,21 +117,27 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return mLoadList.get(position);
     }
 
-    private boolean smallArticle(int position) {
-        return ((Story) mLoadList.get(position)).title.length() <= 32;
+    private boolean isStoryShort(int position) {
+        return (mLoadList.get(position)).title.length() <= 32;
+    }
+
+    @Override
+    public int getItemCount() {
+        return mLoadList.size() == 0 ? 0 : mLoadList.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(position < getDataItemCount() && getDataItemCount() > 0) {
-            if(getItemAt(position) instanceof Advert) {
+        if (position < getDataItemCount() && getDataItemCount() > 0) {
+            if (getItemAt(position) instanceof Advert) {
                 return VIEW_TYPE_ADVERTISEMENT;
-            } else if(getItemAt(position) instanceof Photo) {
+            } else if (getItemAt(position) instanceof Photo) {
                 return VIEW_TYPE_PHOTO;
-            } else if(getItemAt(position) instanceof Story) {
-                if(position==0) {
+            } else if (getItemAt(position) instanceof Story) {
+                if (((Story) getItemAt(position)).type.toLowerCase().equals("large")) {
                     return VIEW_TYPE_LARGE;
-                } else if (smallArticle(position)) {
+                } else if (isStoryShort(position) ||
+                        ((Story) getItemAt(position)).type.toLowerCase().equals("tiny")) {
                     return VIEW_TYPE_CONDENSED;
                 } else {
                     return VIEW_TYPE_NORMAL;
@@ -142,60 +147,56 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return VIEW_TYPE_STUB;
     }
 
-    @Override
-    public int getItemCount() {
-        return mLoadList.size() == 0 ? 0 : mLoadList.size() + 1;
-    }
 
     /* View Holders */
 
-    public static class CardHolder extends RecyclerView.ViewHolder {
+     static class CardHolder extends RecyclerView.ViewHolder {
 
-        public ImageView cardImage;
-        public TextView cardTitle;
-        public TextView cardCategory;
-        public ImageView cardSaveButton;
-        public LinearLayout newsBase;
-        private TextView likesCount;
+        ImageView image;
+        TextView title;
+        TextView category;
+        ImageView saveButton;
+        LinearLayout base;
+        TextView likesCount;
 
         public CardHolder(View itemView) {
             super(itemView);
-            cardImage = (ImageView) itemView.findViewById(R.id.card_image);
-            cardTitle = (TextView) itemView.findViewById(R.id.title);
-            cardCategory = (TextView) itemView.findViewById(R.id.card_category);
-            cardSaveButton = (ImageView) itemView.findViewById(R.id.save);
-            newsBase = (LinearLayout) itemView.findViewById(R.id.news_base);
+            image = (ImageView) itemView.findViewById(R.id.card_image);
+            title = (TextView) itemView.findViewById(R.id.title);
+            category = (TextView) itemView.findViewById(R.id.card_category);
+            saveButton = (ImageView) itemView.findViewById(R.id.save);
+            base = (LinearLayout) itemView.findViewById(R.id.news_base);
             likesCount = (TextView) itemView.findViewById(R.id.like_count);
         }
     }
 
-    public static class LargeCardHolder extends RecyclerView.ViewHolder {
+    static class LargeCardHolder extends RecyclerView.ViewHolder {
 
-        public ImageView cardImage;
-        public TextView cardTitle;
-        public TextView cardCategory;
-        public ImageView cardSaveButton;
-        public CardView newsCard;
-        private TextView likesCount;
+        ImageView image;
+        TextView title;
+        TextView category;
+        ImageView saveButton;
+        CardView newsCard;
+        TextView likesCount;
 
         public LargeCardHolder(View itemView) {
             super(itemView);
-            cardImage = (ImageView) itemView.findViewById(R.id.card_image);
-            cardTitle = (TextView) itemView.findViewById(R.id.title);
-            cardCategory = (TextView) itemView.findViewById(R.id.card_category);
-            cardSaveButton = (ImageView) itemView.findViewById(R.id.save);
+            image = (ImageView) itemView.findViewById(R.id.card_image);
+            title = (TextView) itemView.findViewById(R.id.title);
+            category = (TextView) itemView.findViewById(R.id.card_category);
+            saveButton = (ImageView) itemView.findViewById(R.id.save);
             newsCard = (CardView) itemView.findViewById(R.id.news_card);
             likesCount = (TextView) itemView.findViewById(R.id.like_count);
         }
     }
 
-    public static class CondensedCardHolder extends RecyclerView.ViewHolder {
+    static class CondensedCardHolder extends RecyclerView.ViewHolder {
 
-        public TextView cardTitle;
-        public TextView cardCategory;
-        public ImageView cardSaveButton;
-        public CardView newsCard;
-        private TextView likesCount;
+        TextView cardTitle;
+        TextView cardCategory;
+        ImageView cardSaveButton;
+         CardView newsCard;
+         TextView likesCount;
 
         public CondensedCardHolder(View itemView) {
             super(itemView);
@@ -207,8 +208,8 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private static class PhotoHolder extends RecyclerView.ViewHolder {
-        public BadgedFourThreeImageView photoStory;
+    static class PhotoHolder extends RecyclerView.ViewHolder {
+         BadgedFourThreeImageView photoStory;
 
         public PhotoHolder(View itemView) {
             super(itemView);
@@ -216,19 +217,23 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private static class AdHolder extends RecyclerView.ViewHolder {
+     static class AdHolder extends RecyclerView.ViewHolder {
 
-        public BadgedFourThreeImageView adImage;
+         BadgedFourThreeImageView adImage;
+         TextView adTitle;
+         TextView adDesc;
 
         public AdHolder(View itemView) {
             super(itemView);
             adImage = (BadgedFourThreeImageView) itemView.findViewById(R.id.ad_image);
+            adTitle = (TextView) itemView.findViewById(R.id.ad_title);
+            adDesc = (TextView) itemView.findViewById(R.id.ad_desc);
         }
     }
 
-    private static class StubHolder extends RecyclerView.ViewHolder {
+    static class StubHolder extends RecyclerView.ViewHolder {
 
-        public TextView endText;
+         TextView endText;
 
         public StubHolder(View itemView) {
             super(itemView);
@@ -238,13 +243,13 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     /* View Creators */
     private AdHolder createAdHolder(ViewGroup parent) {
-        //todo : check for crash and change badgedimageview
         final AdHolder holder = new AdHolder(layoutInflater
                 .inflate(R.layout.itemview_adverts, parent, false));
+        holder.adImage.showBadge(true);
         holder.adImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http:"+
+                mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http:" +
                         ((Advert) mLoadList.get(holder.getAdapterPosition())).url
                 )));
             }
@@ -254,36 +259,34 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private CardHolder createCardHolder(ViewGroup parent) {
         final CardHolder holder = new CardHolder(layoutInflater
-        .inflate(R.layout.item_info_card, parent, false));
+                .inflate(R.layout.item_info_card, parent, false));
         return holder;
     }
 
     private LargeCardHolder createLargeCardHolder(ViewGroup parent) {
         final LargeCardHolder holder = new LargeCardHolder(layoutInflater
-        .inflate(R.layout.itemview_story_large, parent, false));
+                .inflate(R.layout.itemview_story_large, parent, false));
         return holder;
     }
 
     private CondensedCardHolder createCondensedCardHolder(ViewGroup parent) {
         final CondensedCardHolder holder = new CondensedCardHolder(layoutInflater
-        .inflate(R.layout.itemview_story, parent, false));
+                .inflate(R.layout.itemview_story, parent, false));
         return holder;
     }
 
     private StubHolder createStubHolder(ViewGroup parent) {
         return new StubHolder(layoutInflater
-        .inflate(R.layout.itemview_stub, parent, false));
+                .inflate(R.layout.itemview_stub, parent, false));
     }
 
     private PhotoHolder createPhotoViewHolder(ViewGroup parent) {
         final PhotoHolder holder = new PhotoHolder(layoutInflater
-        .inflate(R.layout.itemview_image_story, parent, false));
-//        holder.photoStory.setBadgeColor(initialGifBadgeColor);
-        holder.photoStory.showBadge(true);
+                .inflate(R.layout.itemview_image_story, parent, false));
         holder.photoStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, "Hi", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Photo Article", Toast.LENGTH_SHORT).show();
             }
         });
         return holder;
@@ -294,14 +297,14 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Glide.with(mContext)
                 .load(photo.link_image.get(0))
                 .crossFade()
-                .centerCrop()
+//                .centerCrop()
                 .placeholder(R.color.dark_icon)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.photoStory);
     }
 
-    private void bindCardView(final Story story, final CardHolder holder){
-        holder.newsBase.setOnClickListener(new View.OnClickListener() {
+    private void bindCardView(final Story story, final CardHolder holder) {
+        holder.base.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent articleViewIntent = new Intent(mContext, ArticleActivity.class);
@@ -310,42 +313,88 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 mContext.startActivity(articleViewIntent);
             }
         });
-        holder.cardTitle.setText(story.title.trim());
+        holder.title.setText(story.title.trim());
         holder.likesCount.setText(String.valueOf(story.likes));
         int saveDrawableResource = story.isSaved ?
+                R.drawable.ic_saved_offline : R.drawable.ic_save_offline;
+        holder.saveButton.setImageResource(saveDrawableResource);
+        holder.saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(story.isSaved) {
+                    ((NewsActivity)mContext).articleDB.DeleteArticle(story);
+                } else {
+                    ((NewsActivity)mContext).articleDB.SaveArticle(story);
+                }
+                int saveDrawableResource = story.isSaved ?
                         R.drawable.ic_saved_offline : R.drawable.ic_save_offline;
-        holder.cardSaveButton.setImageResource(saveDrawableResource);
+                holder.saveButton.setImageResource(saveDrawableResource);
+            }
+        });
         Glide.with(mContext)
                 .load(story.link_image.get(0))
                 .crossFade()
-                .centerCrop()
+//                .centerCrop()  //backend NEEDS to crop images,
+                                // implementing it in the app alone will look fugly
                 .placeholder(R.color.dark_icon)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.cardImage);
+                .into(holder.image);
     }
 
-    private void bindLargeCardView(Story story, LargeCardHolder holder) {
-        holder.cardTitle.setText(story.title.trim());
+    private void bindLargeCardView(final Story story, final LargeCardHolder holder) {
+        holder.title.setText(story.title.trim());
         holder.likesCount.setText(String.valueOf(story.likes));
-        holder.cardSaveButton.setImageResource(R.drawable.ic_saved_offline);
+        holder.saveButton.setImageResource(R.drawable.ic_saved_offline);
+        holder.newsCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mContext.startActivity(new Intent(mContext, ArticleActivity.class)
+                        .putExtra(Story.INTENT_EXTRA, story));
+            }
+        });
+        holder.saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(story.isSaved) {
+                    ((NewsActivity)mContext).articleDB.DeleteArticle(story);
+                } else {
+                    ((NewsActivity)mContext).articleDB.SaveArticle(story);
+                }
+                int saveDrawableResource = story.isSaved ?
+                        R.drawable.ic_saved_offline : R.drawable.ic_save_offline;
+                holder.saveButton.setImageResource(saveDrawableResource);
+            }
+        });
         Glide.with(mContext)
                 .load(story.link_image.get(0))
                 .crossFade()
-                .centerCrop()
+//                .centerCrop()
                 .listener(getFadeInRequestListener(holder))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.cardImage);
+                .into(holder.image);
     }
 
-    private void bindCondensedCardView(Story story, CondensedCardHolder holder) {
+    private void bindCondensedCardView(final Story story, CondensedCardHolder holder) {
         holder.cardTitle.setText(story.title.trim());
+        holder.newsCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mContext.startActivity(new Intent(mContext, ArticleActivity.class)
+                        .putExtra(Story.INTENT_EXTRA, story));
+            }
+        });
+        int saveDrawableResource = story.isSaved ?
+                R.drawable.ic_saved_offline : R.drawable.ic_save_offline;
+        holder.cardSaveButton.setImageResource(saveDrawableResource);
     }
 
     private void bindAdvertisementView(Advert ad, AdHolder holder) {
+        holder.adTitle.setText(ad.title);
+        holder.adDesc.setText(ad.content);
         Glide.with(mContext)
                 .load(ad.link_image)
                 .crossFade()
-                .centerCrop()
+//                .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.adImage);
     }
@@ -366,8 +415,8 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                            Target<GlideDrawable> target,
                                            boolean isFromMemoryCache,
                                            boolean isFirstResource) {
-                if (!((Story)mLoadList.get(holder.getAdapterPosition())).hasAnimated) {
-                    holder.cardImage.setHasTransientState(true);
+                if (!((Story) mLoadList.get(holder.getAdapterPosition())).hasAnimated) {
+                    holder.image.setHasTransientState(true);
                     final ObservableColorMatrix cm = new ObservableColorMatrix();
                     final ObjectAnimator saturation = ObjectAnimator.ofFloat(
                             cm, ObservableColorMatrix.SATURATION, 0f, 1f);
@@ -378,7 +427,7 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             // just animating the color matrix does not invalidate the
                             // drawable so need this update listener.  Also have to create a
                             // new CMCF as the matrix is immutable :(
-                            holder.cardImage.setColorFilter(new ColorMatrixColorFilter(cm));
+                            holder.image.setColorFilter(new ColorMatrixColorFilter(cm));
                         }
                     });
                     saturation.setDuration(2000L);
@@ -386,12 +435,12 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     saturation.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            holder.cardImage.clearColorFilter();
-                            holder.cardImage.setHasTransientState(false);
+                            holder.image.clearColorFilter();
+                            holder.image.setHasTransientState(false);
                         }
                     });
                     saturation.start();
-                    ((Story)mLoadList.get(holder.getAdapterPosition())).hasAnimated = true;
+                    ((Story) mLoadList.get(holder.getAdapterPosition())).hasAnimated = true;
                 }
                 return false;
             }
@@ -403,5 +452,4 @@ public class NewsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         };
     }
-
 }

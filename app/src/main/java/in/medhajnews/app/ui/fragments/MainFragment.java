@@ -7,6 +7,7 @@ package in.medhajnews.app.ui.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -79,10 +80,10 @@ public class MainFragment extends Fragment {
         mIsRecommendedPage = getArguments().getBoolean(ARG_SECTION);
 
         mainRecyclerView.setItemAnimator(new LandingAnimator());
-        newsCardAdapter = new NewsCardAdapter(getContext(), ArticleList,
+        newsCardAdapter = new NewsCardAdapter(getActivity(), ArticleList,
                 mIsRecommendedPage);
 
-        mLinearLayoutManager = new LinearLayoutManager(getContext());
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
         StaggeredGridLayoutManager mStaggeredLayoutManager =
                 new StaggeredGridLayoutManager(2, OrientationHelper.VERTICAL);
         mStaggeredLayoutManager.setGapStrategy(
@@ -92,7 +93,7 @@ public class MainFragment extends Fragment {
         if (getResources().getBoolean(R.bool.isTab)) {
             mainRecyclerView.setLayoutManager(mStaggeredLayoutManager);
         } else {
-            mainRecyclerView.setLayoutManager(mLinearLayoutManager);
+            mainRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         }
         mainRecyclerView.setItemAnimator(new LandingAnimator(new FastOutSlowInInterpolator()));
         mainRecyclerView.setHasFixedSize(true);

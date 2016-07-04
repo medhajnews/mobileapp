@@ -29,9 +29,12 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import in.medhajnews.app.R;
+import in.medhajnews.app.data.ArticleDBHelper;
 import in.medhajnews.app.data.DataManager;
 import in.medhajnews.app.data.api.models.Story;
 import in.medhajnews.app.data.objects.DataItem;
@@ -67,6 +70,8 @@ public class NewsActivity extends AppCompatActivity
 
     private DataManager dataManager;
     private List<DataItem> items;
+
+    public ArticleDBHelper articleDB;
 
 
     @Override
@@ -112,11 +117,20 @@ public class NewsActivity extends AppCompatActivity
         dataManager = new DataManager(this) {
             @Override
             public void onDataLoaded(List<? extends DataItem> data) {
-                mProgress.setVisibility(View.GONE);
-                fetchCurrentFragment().newsCardAdapter.mLoadList.addAll(0, data);
+                items.addAll(data);
+
+            }
+
+            @Override
+            protected void loadFinished() {
+                //todo : fix crash here, on partial data load
+                long seed = System.nanoTime();
+                Collections.shuffle(items, new Random(seed)); //todo : sort properly
+                fetchCurrentFragment().newsCardAdapter.mLoadList.addAll(0, items);
                 fetchCurrentFragment().newsCardAdapter
-                        .notifyItemRangeInserted(0, data.size());
+                        .notifyItemRangeInserted(0, items.size());
                 notifyPreLoadedFragment();
+                mProgress.setVisibility(View.GONE);
             }
 
             @Override
@@ -150,6 +164,7 @@ public class NewsActivity extends AppCompatActivity
         mViewPager.setAdapter(mMainPagerAdapter);
         mViewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.spacing_normal));
 
+        articleDB = new ArticleDBHelper(this);
     }
 
     private void startIntroAnimation() {
@@ -249,7 +264,10 @@ public class NewsActivity extends AppCompatActivity
     }
 
     private void showDeviceOffline() {
-        brokenConnection.setVisibility(View.VISIBLE);
+        //show broken connection, only if the item list is empty
+        if(fetchCurrentFragment().newsCardAdapter.mLoadList.size() == 0) {
+            brokenConnection.setVisibility(View.VISIBLE);
+        }
         mProgress.setVisibility(View.GONE);
         mSnackBar = Snackbar.make(
                 mFloatingActionMenu,
@@ -300,10 +318,6 @@ public class NewsActivity extends AppCompatActivity
     public void onClick(View view) {
         switch (view.getId()) {
 
-            case R.id.fam: {
-
-            }
-
             case R.id.fab_saved: {
                 mFloatingActionMenu.close(true);
                 new Handler().postDelayed(new Runnable() {
@@ -325,6 +339,11 @@ public class NewsActivity extends AppCompatActivity
             }
 
         }
+    }
+
+    /* Temporary */
+    private void Mashup() {
+
     }
 
     /* ViewPager PageScroll Listener */

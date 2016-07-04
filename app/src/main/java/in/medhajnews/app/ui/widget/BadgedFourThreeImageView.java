@@ -26,7 +26,7 @@ import in.medhajnews.app.R;
  */
 public class BadgedFourThreeImageView extends FourThreeImageView {
 
-    private Drawable badge;
+    private Badge badge;
     private boolean drawBadge;
     private boolean badgeBoundsSet = false;
     private int badgeGravity;
@@ -86,7 +86,7 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
      */
     public static class Badge extends Drawable {
 
-        public String badgeText = "AD";
+        private final static String AD = "AD";
         private static final int TEXT_SIZE = 12;    // sp
         private static final int PADDING = 4;       // dp
         private static final int CORNER_RADIUS = 2; // dp
@@ -111,7 +111,7 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
                 final float padding = PADDING * density;
                 final float cornerRadius = CORNER_RADIUS * density;
                 final Rect textBounds = new Rect();
-                textPaint.getTextBounds(badgeText, 0, badgeText.length(), textBounds);
+                textPaint.getTextBounds(AD, 0, AD.length(), textBounds);
                 height = (int) (padding + textBounds.height() + padding);
                 width = (int) (padding + textBounds.width() + padding);
                 bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -128,7 +128,7 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
                 }
                 // punch out the word , leaving transparency
                 textPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                canvas.drawText(badgeText, padding, height - padding, textPaint);
+                canvas.drawText(AD, padding, height - padding, textPaint);
             }
             paint = new Paint();
         }
@@ -151,10 +151,6 @@ public class BadgedFourThreeImageView extends FourThreeImageView {
         @Override
         public void setAlpha(int alpha) {
             // ignored
-        }
-
-        public void setBadgeText(String s) {
-            badgeText = s.toUpperCase();
         }
 
         @Override

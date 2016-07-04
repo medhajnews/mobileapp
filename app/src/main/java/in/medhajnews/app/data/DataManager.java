@@ -22,6 +22,7 @@ import retrofit2.Response;
 public abstract class DataManager extends BaseDataManager<List<? extends DataItem>> {
 
     private Map<String, Call> callMap;
+    private final static String TAG = DataManager.class.getSimpleName();
     private final static String ADS = "ADS";
     private final static String STORIES = "STORIES";
     private final static String PHOTOS = "PHOTOS"; //photo articles, i didn't think before naming
@@ -51,9 +52,17 @@ public abstract class DataManager extends BaseDataManager<List<? extends DataIte
         }
     }
 
+    private void loadFinished(String key) {
+        if (callMap.size() > 1) { // finish loading after removing last item
+            callMap.remove(key);
+            loadFinished();
+        }
+        callMap.remove(key);
+    }
+
     private void loadFailed(String key) {
         loadFailed();
-        callMap.remove(key);
+        cancelLoading();  //cancel all calls if one call fails, //todo update this with a better logic
     }
 
     private void loadTopStories() {
@@ -63,7 +72,7 @@ public abstract class DataManager extends BaseDataManager<List<? extends DataIte
             public void onResponse(Call<List<Story>> call, Response<List<Story>> response) {
                 if(response.isSuccessful()) {
                     if(response.body() != null && !response.body().isEmpty()) {
-                        loadFinished();
+                        loadFinished(STORIES);
                         onDataLoaded(response.body());
                     }
                 } else {
@@ -86,7 +95,7 @@ public abstract class DataManager extends BaseDataManager<List<? extends DataIte
             public void onResponse(Call<List<Photo>> call, Response<List<Photo>> response) {
                 if(response.isSuccessful()) {
                     if(response.body() != null && !response.body().isEmpty()) {
-                        loadFinished();
+                        loadFinished(PHOTOS);
                         onDataLoaded(response.body());
                     }
                 } else {
@@ -109,7 +118,7 @@ public abstract class DataManager extends BaseDataManager<List<? extends DataIte
             public void onResponse(Call<List<Advert>> call, Response<List<Advert>> response) {
                 if(response.isSuccessful()) {
                     if(response.body() != null && !response.body().isEmpty()) {
-                        loadFinished();
+                        loadFinished(ADS);
                         onDataLoaded(response.body());
                     }
                 } else {
